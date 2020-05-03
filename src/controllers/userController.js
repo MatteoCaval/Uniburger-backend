@@ -24,6 +24,18 @@ exports.login = async (req, res) => {
     }
 }
 
+exports.logout = async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save()
+        res.status(200).send('logout successful')
+    } catch (error) {
+        res.status(400).send({ description: 'logout error' })
+    }
+}
+
 exports.create_user = async (req, res) => {
     try {
         const { name, email, password } = req.body
