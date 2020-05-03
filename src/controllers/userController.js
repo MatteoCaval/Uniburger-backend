@@ -27,6 +27,12 @@ exports.login = async (req, res) => {
 exports.create_user = async (req, res) => {
     try {
         const { name, email, password } = req.body
+
+        const registeredUser = await User.findOne({ email })
+        if (registeredUser) {
+            res.status(400).send({ description: 'User already present' })
+        }
+
         const hashedPassowrd = await bcrypt.hash(password, 8)
         const user = new User({
             name,
