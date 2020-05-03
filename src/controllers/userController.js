@@ -8,7 +8,8 @@ const JWT_KEY = "chiave"
 // TODO extrarre parte di generazione token e hash password, queste sono solo prove
 
 exports.get_user = async (req, res) => {
-
+    const { name, email} = req.user
+    res.status(200).send({ name, email })
 }
 
 exports.login = async (req, res) => {
