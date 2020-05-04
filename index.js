@@ -3,7 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const config = require('./src/config')
-
+const cors = require('cors')
 
 
 mongoose.connect(
@@ -13,6 +13,7 @@ mongoose.connect(
         useFindAndModify: false
     })
 
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
@@ -24,5 +25,5 @@ app.use((req,res) => {
 })
 
 app.listen(config.LISTEN_PORT, () => {
-    console.log('listening on port 3000');
+    console.log(`listening on port ${config.LISTEN_PORT}`);
 });
