@@ -1,5 +1,5 @@
 const User = require('../models/userModel')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 // TODO extrarre parte di generazione token e hash password, queste sono solo prove
 
