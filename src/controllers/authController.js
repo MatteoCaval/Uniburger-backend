@@ -33,7 +33,7 @@ exports.logout = async (req, res) => {
 
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { email, password } = req.body
 
         const registeredUser = await User.findOne({ email })
         if (registeredUser) {
@@ -42,13 +42,12 @@ exports.signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 8)
         const user = new User({
-            name,
             email,
             password: hashedPassword
         })
         await user.save()
         const token = await user.generateAuthToken()
-        res.status(201).send({ name, email, token })
+        res.status(201).send({ email, token })
 
     } catch (error) {
         console.log(error)
