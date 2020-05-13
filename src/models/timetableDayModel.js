@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const timetableSchema  = mongoose.Schema({
-    giorno: {
+    day: {
         type: String,
         required: true
     },

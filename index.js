@@ -10,7 +10,8 @@ mongoose.connect(
     config.MONGO_URI, // test nome del database, non della collection
     {
         useNewUrlParser: true,
-        useFindAndModify: false
+        useFindAndModify: false,
+        useUnifiedTopology: true
     })
 
 app.use(cors())
@@ -18,9 +19,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 const userRoutes = require('./src/routes/userRoutes')
-const authRouter = require('./src/routes/authRoutes')
+const authRoutes = require('./src/routes/authRoutes')
+const catalogRoutes = require('./src/routes/catalogRoutes')
+
 userRoutes(app)
-authRouter(app)
+authRoutes(app)
+catalogRoutes(app)
 
 app.use((req,res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
