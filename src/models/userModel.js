@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
         required: true,
         lowercase: true,
     },
-    hashedPassword: {
+    password: {
         type: String,
         required: true,
         minLength: 8
