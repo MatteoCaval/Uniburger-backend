@@ -40,11 +40,11 @@ exports.signup = async (req, res) => {
             res.status(400).send({ description: 'User already present' })
         }
 
-        const hashedPassowrd = await bcrypt.hash(password, 8)
+        const hashedPassword = await bcrypt.hash(password, 8)
         const user = new User({
             name,
             email,
-            password: hashedPassowrd
+            password: hashedPassword
         })
         await user.save()
         const token = await user.generateAuthToken()

@@ -4,7 +4,16 @@ const config = require('../config')
 const jwt = require('jsonwebtoken')
 
 const userSchema = mongoose.Schema({
+    id: {
+        type: String,
+        required: true,
+    },  
     name: {
+        type: String,
+        required: true,
+        trim: true
+    },    
+    surname: {
         type: String,
         required: true,
         trim: true
@@ -14,7 +23,7 @@ const userSchema = mongoose.Schema({
         required: true,
         lowercase: true,
     },
-    password: {
+    hashedPassword: {
         type: String,
         required: true,
         minLength: 8
@@ -24,8 +33,24 @@ const userSchema = mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    cart: [{
+        
+            productId: {
+                type: String,
+                required: true,
+            },  
+            quantity: {
+                type: Number,
+                required: true,
+            } 
+    }], 
+    role: {
+        type: String,
+        required: true,
+    }
 })
+
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
