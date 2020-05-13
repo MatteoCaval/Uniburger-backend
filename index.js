@@ -18,7 +18,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 const userRoutes = require('./src/routes/userRoutes')
+const authRouter = require('./src/routes/authRoutes')
 userRoutes(app)
+authRouter(app)
 
 app.use((req,res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
