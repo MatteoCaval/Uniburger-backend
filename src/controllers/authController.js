@@ -33,7 +33,7 @@ exports.logout = async (req, res) => {
 
 exports.signup = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password, name, surname, role } = req.body
 
         const registeredUser = await User.findOne({ email })
         if (registeredUser) {
@@ -43,7 +43,10 @@ exports.signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 8)
         const user = new User({
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            name,
+            surname,
+            role
         })
         await user.save()
         const token = await user.generateAuthToken()
