@@ -9,5 +9,5 @@ module.exports = (app) => {
         .post(auth, authController.logout)
 
     app.route('/auth/signup')
-        .post(authController.create_user)
+        .post(authController.signup)
 }
