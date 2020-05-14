@@ -7,11 +7,9 @@ exports.get_category_products = async (req, res) => {
         const existentCategory = await Category.findOne({ _id: categoryId });
         if (existentCategory) {
             const products = existentCategory.products;
-            res.status(201).send({ products });
-            return
+            res.status(201).send(products);
         } else {
             res.status(404).send({ message: "Category doens't exist" });
-            return
         }
     } catch (error) {
         res.status(404).send({ description: error.message });
