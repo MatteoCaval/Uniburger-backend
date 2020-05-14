@@ -2,14 +2,16 @@ const Category = require("../models/categoryModel");
 
 exports.get_category_products = async (req, res) => {
     try {
-        const categoryId = req.query.categoryId;
+        const categoryId = req.params.categoryId;
 
         const existentCategory = await Category.findOne({ _id: categoryId });
         if (existentCategory) {
             const products = existentCategory.products;
             res.status(201).send({ products });
+            return
         } else {
             res.status(404).send({ message: "Category doens't exist" });
+            return
         }
     } catch (error) {
         res.status(404).send({ description: error.message });
@@ -28,9 +30,7 @@ exports.add_product_to_category = async (req, res) => {
             ingredients,
         } = req.body;
 
-        const existentCategory = await Category.findOne({
-            _id: category_id,
-        });
+        const existentCategory = await Category.findOne({_id: category_id});
         if (existentCategory) {
             existentCategory.products.push({
                 name,
@@ -56,11 +56,19 @@ exports.update_product = async (req, res) => {
     try {
         const { name, description, image, price, ingredients } = req.body;
 
-        const productId = req.query.productId;
+        const productId = req.params.productId;
 
-        const existingCategory = await Category.findOne({
-            name: category_name,
-        });
+        await (await Category.find({})).forEach((x) => {
+            const prod = x.findOne({"products._id": productId})
+            console.log(x)
+        })
+
+
+        res.status(201).send({ message: "Product updated" });
+
+
+        /*
+
         if (existingCategory) {
             console.log(category_name);
             console.log(product_name);
@@ -70,12 +78,7 @@ exports.update_product = async (req, res) => {
                 "products._id": productId,
             });
             console.log(product);
-            if (
-                await Category.findOne({
-                    name: category_name,
-                    "products._id": productId,
-                })
-            ) {
+            if (await Category.findOne({name: category_name,"products._id": productId,})) {
                 // TODO: in questo modo sovrascrive TUTTI i campi se non li passo
                 await Category.updateOne(
                     { name: category_name, "products._id": productId },
@@ -94,7 +97,7 @@ exports.update_product = async (req, res) => {
             }
         } else {
             res.status(404).send({ message: "Category doens't exist" });
-        }
+        }*/
     } catch (error) {
         res.status(404).send({ description: error.message });
         console.log(error.message);
