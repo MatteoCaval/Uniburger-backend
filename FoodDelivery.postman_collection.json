@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "ea003423-4812-4750-bac0-ff4efd5a9577",
+		"name": "FoodDelivery",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create category",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Primis\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete category",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Primis\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update category",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Primi piatti\",\n\t\"new_name\": \"Secondi piatti\",\n\t\"image\": \"https://www.cucchiaio.it/content/cucchiaio/it/ricette/2019/12/spaghetti-al-pomodoro/jcr:content/header-par/image-single.img10.jpg/1576681061599.jpg\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get categories",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add product",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"category_name\" : \"Primi piatti\",\r\n    \"name\" : \"Spaghetti alla Amatriciana\",\r\n    \"description\": \"Piatto tipico italiano, dove il guanciale è il protagonista indiscusso\",\r\n    \"price\": 20,\r\n    \"ingredients\": [\"Pasta\",\"Pomodoro\",\"Guanciale\",\"Cipolla\"]\r\n\t\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update product",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"category_name\" : \"Primi piatti\",\r\n    \"product_name\" : \"Spaghetti alla Amatriciana\",\r\n    \"price\": 25\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete product",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"category_name\" : \"Primi piatti\",\r\n    \"product_name\" : \"Spaghetti alla Amatriciana\",\r\n    \"price\": 25\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get products",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"category_name\" : \"Primi piatti\",\r\n    \"product_name\" : \"Spaghetti alla Amatriciana\",\r\n    \"price\": 25\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/catalog/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"catalog",
+						"product"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
