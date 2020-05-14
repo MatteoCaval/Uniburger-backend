@@ -1,5 +1,5 @@
 module.exports = (app) => {
-    const categoryController = require('../controllers/categoryController.js')
+    const categoryController = require('../controllers/categoryController')
     const productController = require('../controllers/productController')
 
     app.route('/catalog/categories')

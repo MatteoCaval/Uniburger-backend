@@ -71,7 +71,7 @@ exports.update_product = async (req, res) => {
       console.log(asd)
       if (await Category.findOne({name: category_name, "products.name": product_name})) {
         // TODO: in questo modo sovrascrive TUTTI i campi se non li passo
-        await Category.update(
+        await Category.updateOne(
           { name: category_name, "products.name": product_name },
           { "products.$.name": name, "products.$.description": description, "products.$.image": image, "products.$.price": price, "products.$.ingredients": ingredients }
         )
