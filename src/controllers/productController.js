@@ -17,7 +17,7 @@ exports.get_category_products = async (req, res) => {
   }
 };
 
-exports.add_product = async (req, res) => {
+exports.add_product_to_category = async (req, res) => {
   try {
     const {
       category_name,

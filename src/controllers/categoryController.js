@@ -20,8 +20,8 @@ exports.create_category = async (req, res) => {
       return
     }
 
-    const existentCategory = await Category.findOne({ name });
-    if (existentCategory) {
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
       res.status(400).send({ description: "Category already present" });
       return
     }
@@ -42,12 +42,13 @@ exports.create_category = async (req, res) => {
 
 exports.update_category = async (req, res) => {
   try {
-    const { name, new_name, image } = req.body;
+    const categoryId = req.query.categoryId;
+    const { name, image } = req.body;
     console.log(req.body);
 
-    const existentCategory = await Category.findOne({ name });
+    const existentCategory = await Category.findOne({ _id: categoryId });
     if (existentCategory) {
-      await Category.updateOne({ name }, { name: new_name, image: image });
+      await Category.updateOne({ _id: categoryId }, { name: name, image: image });
 
       res.status(201).send({ message: "Category successfully updated" });
     } else {
@@ -61,10 +62,10 @@ exports.update_category = async (req, res) => {
 
 exports.delete_category = async (req, res) => {
   try {
-    const name = req.body.name;
+    const categoryId = req.query.categoryId;
     console.log(req.body);
 
-    const existentCategory = await Category.findOne({ name });
+    const existentCategory = await Category.findOne({ _id: categoryId });
 
     if (existentCategory) {
       await Category.deleteOne(existentCategory);
