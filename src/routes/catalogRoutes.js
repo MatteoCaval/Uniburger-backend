@@ -3,7 +3,7 @@ module.exports = (app) => {
     const productController = require('../controllers/productController')
 
     app.route('/catalog/category')
-        .get(categoryController.get_category)
+        .get(categoryController.get_categories)
         .post(categoryController.create_category)
         .put(categoryController.update_category)
         .delete(categoryController.delete_category)
