@@ -3,7 +3,13 @@ const Category = require("../models/categoryModel");
 exports.get_categories = async (req, res) => {
   try {
     const categories = await Category.find({});
-    res.status(201).send(categories);
+      res.status(201).send(categories.map(category => {
+          return {
+              id: category._id,
+              name: category.name,
+              image: category.image
+          }
+      }));
   } catch (error) {
     console.log(error.message);
     res.status(400).send({ description: error.message });
