@@ -9,8 +9,8 @@ module.exports = (app) => {
         .delete(categoryController.delete_category)
 
     app.route('/catalog/product')
-        .get(productController.get_product)
-        .post(productController.create_product)
+        .get(productController.get_category_products)
+        .post(productController.add_product)
         .put(productController.update_product)
         .delete(productController.delete_product)
 }
