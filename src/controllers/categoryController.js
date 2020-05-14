@@ -17,11 +17,13 @@ exports.create_category = async (req, res) => {
 
     if (name == null) {
       res.status(401).send({ message: "Wrong parameters" });
+      return
     }
 
     const existentCategory = await Category.findOne({ name });
     if (existentCategory) {
       res.status(400).send({ description: "Category already present" });
+      return
     }
 
     const category = new Category({
