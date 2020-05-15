@@ -11,7 +11,8 @@ exports.get_product = async (req, res) => {
                     name: product.name,
                     description: product.description,
                     image: product.image,
-                    price: product.price
+                    price: product.price,
+                    ingredients: product.ingredients
                 }
             );
         } else {
