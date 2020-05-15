@@ -9,7 +9,7 @@ exports.get_category_products = async (req, res) => {
             const products = existentCategory.products;
             res.status(201).send(products.map(product => {
                 return {
-                    id:product.id,
+                    id: product.id,
                     name: product.name,
                     description: product.description,
                     image: product.image,
@@ -48,9 +48,9 @@ exports.add_product_to_category = async (req, res) => {
             });
 
             await existentCategory.save();
-            let asd = existentCategory.products[existentCategory.products.length-1]._id
+            let asd = existentCategory.products[existentCategory.products.length - 1]._id
 
-            res.status(201).send({ message: `Product successfully added. Id: ${asd}`});
+            res.status(201).send({ message: `Product successfully added. Id: ${asd}` });
         } else {
             res.status(404).send({ message: "Category doens't exist" });
         }
@@ -112,10 +112,10 @@ exports.delete_product = async (req, res) => {
         categories.forEach(async (category) => {
             category.products.forEach(async (product) => {
                 console.log(product.name);
-                if (product._id == productId) {
+                if (product._id === productId) {
                     category.products.id(productId).remove()
                     category.save()
-         
+
                     res.status(201).send({ message: "Product deleted" })
                     return
                 }
@@ -126,3 +126,33 @@ exports.delete_product = async (req, res) => {
         console.log(error.message);
     }
 };
+
+exports.get_products = async (req, res) => {
+    try {
+        const categoryId = req.query.categoryId
+        if (categoryId) {
+            const existentCategory = await Category.findOne({ _id: categoryId });
+            if (existentCategory) {
+                const products = existentCategory.products;
+                res.status(201).send(products.map(product => {
+                    return {
+                        id: product.id,
+                        name: product.name,
+                        description: product.description,
+                        image: product.image,
+                        price: product.price
+                    }
+                }));
+
+            } else {
+                res.status(404).send({ message: "Category doens't exist" });
+            }
+        } else {
+
+        }
+
+    } catch (error) {
+        res.status(404).send({ description: error.message });
+        console.log(error.message);
+    }
+}
