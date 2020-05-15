@@ -28,5 +28,20 @@ const categorySchema = mongoose.Schema({
     products: [productSchema]
 })
 
+categorySchema.statics.findProductById = async (productId) => {
+    const categories = await Category.find()
+    let matchingProduct = null
+    categories.forEach(async (category) => {
+        category.products.forEach(async (product) => {
+            if (product._id == productId) {
+                matchingProduct = product
+
+            }
+        });
+    });
+    return matchingProduct
+}
+
+
 const Category = mongoose.model("Category", categorySchema, "Categories")
 module.exports = Category

@@ -1,24 +1,21 @@
 const Category = require("../models/categoryModel");
 
-exports.get_category_products = async (req, res) => {
+exports.get_product = async (req, res) => {
     try {
-        const categoryId = req.params.categoryId;
-
-        const existentCategory = await Category.findOne({ _id: categoryId });
-        if (existentCategory) {
-            const products = existentCategory.products;
-            res.status(201).send(products.map(product => {
-                return {
+        const productId = req.params.productId;
+        const product = await Category.findProductById(productId)
+        console.log(product)
+        if (product) {
+            res.status(201).send({
                     id: product.id,
                     name: product.name,
                     description: product.description,
                     image: product.image,
                     price: product.price
                 }
-            }));
-
+            );
         } else {
-            res.status(404).send({ message: "Category doens't exist" });
+            res.status(404).send({ message: "Product not found" });
         }
     } catch (error) {
         res.status(404).send({ description: error.message });
@@ -148,7 +145,7 @@ exports.get_products = async (req, res) => {
                 res.status(404).send({ message: "Category doens't exist" });
             }
         } else {
-
+            // TODO: get all products
         }
 
     } catch (error) {

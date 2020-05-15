@@ -18,8 +18,8 @@ module.exports = (app) => {
         .get(productController.get_products);
 
     app
-        .route("/catalog/products/:categoryId")
-        .get(productController.get_category_products);
+        .route("/catalog/products/:productId")
+        .get(productController.get_product);
 
     app
         .route("/catalog/products/:productId")
