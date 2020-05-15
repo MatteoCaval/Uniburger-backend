@@ -9,4 +9,7 @@ module.exports = (app) => {
         .get(auth, userController.get_user)
         .delete(auth, userController.delete_user)
 
+    app.route('/user/cart')
+        .post(auth, userController.add_product_to_cart)
+
 }

@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    },    
+    },
     surname: {
         type: String,
         required: true,
@@ -31,22 +31,31 @@ const userSchema = mongoose.Schema({
         }
     }],
     cart: [{
-        
-            productId: {
-                type: String,
-                required: true,
-            },  
-            quantity: {
-                type: Number,
-                required: true,
-            } 
-    }], 
+
+        productId: {
+            type: String,
+            required: true,
+        },
+        quantity: {
+            type: Number,
+            required: true,
+        }
+    }],
     role: {
         type: String,
         required: true,
     }
 })
 
+userSchema.methods.addProductToCart = async (productId) => {
+    const alreadyAddedProduct = await this.cart.find(elem => elem._id === productId)
+    if (alreadyAddedProduct) {
+        alreadyAddedProduct.quantity++
+    } else {
+        this.cart.concat({ productId, quantity: 1 })
+    }
+    this.save()
+}
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
