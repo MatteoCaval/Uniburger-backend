@@ -11,5 +11,6 @@ module.exports = (app) => {
 
     app.route('/user/cart')
         .post(auth, userController.add_product_to_cart)
+        .get(auth, userController.get_user_cart)
 
 }

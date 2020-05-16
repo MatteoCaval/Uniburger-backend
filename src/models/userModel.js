@@ -47,14 +47,16 @@ const userSchema = mongoose.Schema({
     }
 })
 
-userSchema.methods.addProductToCart = async (productId) => {
-    const alreadyAddedProduct = await this.cart.find(elem => elem._id === productId)
+userSchema.methods.addProductToCart = async function (productId) {
+    const user = this
+    const alreadyAddedProduct = await user.cart.find(elem => elem.productId === productId)
     if (alreadyAddedProduct) {
         alreadyAddedProduct.quantity++
     } else {
-        this.cart.concat({ productId, quantity: 1 })
+        user.cart = user.cart.concat({ productId, quantity: 1 })
     }
-    this.save()
+    await user.save()
+    console.log(user.cart)
 }
 
 userSchema.methods.generateAuthToken = async function () {

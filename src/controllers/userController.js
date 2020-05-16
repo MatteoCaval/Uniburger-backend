@@ -20,10 +20,19 @@ exports.add_product_to_cart = async (req, res) => {
     try {
         const user = req.user
         const { productId } = req.body
-        // controllare se già presente
-        // user.addProductToCart(productId)
-        console.log(productId)
-        res.status(400).send({desription: `ci sto ancora lavorando, attendere prego, intando dovrei aver ricevuto il tuo id: ${productId}`})
+        // controllare se prodotto esiste
+        await user.addProductToCart(productId)
+        res.status(200).send({desription: `product added`})
+    } catch (e) {
+        console.log(e)
+        res.status(400).send({ description: 'Error adding product to cart' })
+    }
+}
+
+exports.get_user_cart = async (req, res) => {
+    try {
+        const user = req.user
+        res.status(200).send(user.cart)
     } catch (e) {
         console.log(e)
         res.status(400).send({ description: 'Error adding product to cart' })
