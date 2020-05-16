@@ -35,7 +35,6 @@ categorySchema.statics.findProductById = async (productId) => {
         category.products.forEach(async (product) => {
             if (product._id == productId) {
                 matchingProduct = product
-
             }
         });
     });
