@@ -21,10 +21,12 @@ app.use(bodyParser.json())
 const userRoutes = require('./src/routes/userRoutes')
 const authRoutes = require('./src/routes/authRoutes')
 const catalogRoutes = require('./src/routes/catalogRoutes')
+const ordersRoutes = require('./src/routes/ordersRoutes')
 
 userRoutes(app)
 authRoutes(app)
 catalogRoutes(app)
+ordersRoutes(app)
 
 app.use((req,res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });

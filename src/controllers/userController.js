@@ -1,6 +1,7 @@
 const User = require('../models/userModel')
 const bcrypt = require('bcryptjs')
 const Category = require("../models/categoryModel");
+const Order = require('../models/orderModel')
 
 // TODO estrarre parte di generazione token e hash password, queste sono solo prove
 
@@ -10,7 +11,13 @@ exports.get_user = async (req, res) => {
 }
 
 exports.get_user_orders = async (req, res) => {
-    // TODO
+    try {
+        const user = req.user
+        const userOrders = await Order.find({ userId: user._id })
+        res.status(200).send(userOrders)
+    } catch (error) {
+        res.status(400).send({ description: error.message })
+    }
 }
 
 exports.delete_user = async (req, res) => {

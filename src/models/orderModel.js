@@ -1,15 +1,11 @@
 const mongoose = require('mongoose')
 
 const orderSchema = mongoose.Schema({
-    id: {
-        type: String,
-        required: true,
-    },
     totalPrice: {
         type: Number,
         required: true,
     },
-    indirizzo: {
+    address: {
         type: String,
         required: true,
     },

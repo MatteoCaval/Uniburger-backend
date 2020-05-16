@@ -6,7 +6,6 @@ const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
         const data = jwt.verify(token, config.TOKEN_SECRET)
-        console.log(data)
         const user = await User.findOne({ _id: data._id, 'tokens.token': token })
         if (!user) {
             throw new Error('No corresponding user')
@@ -15,7 +14,7 @@ const auth = async (req, res, next) => {
         req.token = token
         next()
     } catch (error) {
-        res.status(401).send({ description: error.message })
+        res.status(401).send({ description: 'Authenitication error' })
     }
 }
 

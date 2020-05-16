@@ -4,7 +4,6 @@ exports.get_product = async (req, res) => {
     try {
         const productId = req.params.productId;
         const product = await Category.findProductById(productId)
-        console.log(product)
         if (product) {
             res.status(201).send({
                     id: product.id,
