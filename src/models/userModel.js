@@ -56,7 +56,6 @@ userSchema.methods.addProductToCart = async function (productId) {
         user.cart = user.cart.concat({ productId, quantity: 1 })
     }
     await user.save()
-    console.log(user.cart)
 }
 
 userSchema.methods.generateAuthToken = async function () {

@@ -35,15 +35,15 @@ exports.get_user_cart_products = async (req, res) => {
         const user = req.user
         const products = await Promise.all(user.cart.map(async cartItem => {
             const matchingProduct = await Category.findProductById(cartItem.productId)
-            return matchingProduct
+            return { ...(matchingProduct.toObject()), quantity: cartItem.quantity }
         }))
-
         res.status(200).send(products.map(prod => {
             return {
                 id: prod._id,
                 name: prod.name,
                 price: prod.price,
-                image: prod.image
+                image: prod.image,
+                quantity: prod.quantity
             }
         }))
     } catch (e) {
