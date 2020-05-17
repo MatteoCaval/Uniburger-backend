@@ -30,8 +30,13 @@ exports.add_product_to_cart = async (req, res) => {
         const user = req.user
         const { productId } = req.body
         // controllare se prodotto esiste
-        await user.addProductToCart(productId)
-        res.status(200).send({ desription: `product added` })
+        const product = await Product.findById(productId)
+        if (product) {
+            await user.addProductToCart(product)
+            res.status(200).send({ desription: `product added` })
+        } else {
+            res.status(404).send({ description: 'Product not found' })
+        }
     } catch (e) {
         console.log(e)
         res.status(400).send({ description: 'Error adding product to cart' })
@@ -41,20 +46,7 @@ exports.add_product_to_cart = async (req, res) => {
 exports.get_user_cart_products = async (req, res) => {
     try {
         const user = req.user
-        // const products = await Promise.all(user.cart.map(async cartItem => {
-        //     const matchingProduct = await Category.findProductById(cartItem.productId)
-        //     return { ...(matchingProduct.toObject()), quantity: cartItem.quantity }
-        // }))
-        const productIds = user.cart.map(prod => prod.productId)
-        const products = await Product.find({"_id": {$in : productIds}})
-        res.status(200).send(products.map(prod => {
-            return {
-                id: prod._id,
-                name: prod.name,
-                price: prod.price,
-                image: prod.image
-            }
-        }))
+        res.status(200).send(user.cart)
     } catch (e) {
         console.log(e)
         res.status(400).send({ description: 'Error adding product to cart' })
