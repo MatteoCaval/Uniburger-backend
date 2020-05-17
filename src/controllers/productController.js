@@ -1,13 +1,16 @@
+const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
 
 exports.get_product = async (req, res) => {
     try {
         const productId = req.params.productId;
-        const product = await Category.findProductById(productId)
+        const product = await Product.findById(productId)
         if (product) {
             res.status(201).send({
                     id: product.id,
                     name: product.name,
+                    categoryId: product.categoryId,
+                    categoryName: product.categoryName,
                     description: product.description,
                     image: product.image,
                     price: product.price,
@@ -34,20 +37,20 @@ exports.add_product_to_category = async (req, res) => {
             ingredients,
         } = req.body;
 
-        const existentCategory = await Category.findOne({ _id: category_id });
+        console.log(category_id)
+        const existentCategory = await Category.findById(category_id);
         if (existentCategory) {
-            existentCategory.products.push({
+            const product = new Product({
                 name,
                 description,
                 image,
                 price,
                 ingredients,
-            });
-
-            await existentCategory.save();
-            let asd = existentCategory.products[existentCategory.products.length - 1]._id
-
-            res.status(201).send({ message: `Product successfully added. Id: ${asd}` });
+                categoryId: category_id,
+                categoryName: existentCategory.name
+            })
+            await product.save();
+            res.status(201).send({ message: `Product successfully added. Id: ${product._id}` });
         } else {
             res.status(404).send({ message: "Category doens't exist" });
         }
@@ -62,39 +65,27 @@ exports.update_product = async (req, res) => {
         const { name, description, image, price, ingredients } = req.body;
 
         const productId = req.params.productId;
+        const product = await Product.findById(productId)
 
-        const categories = await Category.find();
-        categories.forEach(async (category) => {
-            category.products.forEach(async (product) => {
-                console.log(product.name);
-                if (product._id == productId) {
-                    let categoryId = category._id;
+        const prod_name = name != null ? name : product.name;
+        const prod_description = description != null ? description : product.description;
+        const prod_image = image != null ? image : product.image;
+        const prod_price = price != null ? price : product.price;
+        const prod_ingredients = ingredients != null ? ingredients : product.ingredients;
 
-                    let prod_name = name != null ? name : product.name;
-                    let prod_description =
-                        description != null ? description : product.description;
-                    let prod_image = image != null ? image : product.image;
-                    let prod_price = price != null ? price : product.price;
+        await Product.updateOne(
+            { _id: productId },
+            {
+                name: prod_name,
+                description: prod_description,
+                image: prod_image,
+                price: prod_price,
+                ingredients: prod_ingredients,
+            }
+        );
 
-                    let prod_ingredients =
-                        ingredients != null ? ingredients : product.ingredients;
+        res.status(201).send({ message: "Product updated" });
 
-                    await Category.updateOne(
-                        { _id: categoryId, "products._id": productId },
-                        {
-                            "products.$.name": prod_name,
-                            "products.$.description": prod_description,
-                            "products.$.image": prod_image,
-                            "products.$.price": prod_price,
-                            "products.$.ingredients": prod_ingredients,
-                        }
-                    );
-
-                    res.status(201).send({ message: "Product updated" });
-                    return;
-                }
-            });
-        });
     } catch (error) {
         res.status(404).send({ description: error.message });
         console.log(error.message);
@@ -103,21 +94,19 @@ exports.update_product = async (req, res) => {
 
 exports.delete_product = async (req, res) => {
     try {
+
         const productId = req.params.productId;
 
-        const categories = await Category.find()
-        categories.forEach(async (category) => {
-            category.products.forEach(async (product) => {
-                console.log(product.name);
-                if (product._id === productId) {
-                    category.products.id(productId).remove()
-                    category.save()
+        const product = await Product.findById(productId)
 
-                    res.status(201).send({ message: "Product deleted" })
-                    return
-                }
-            })
-        })
+        if (product) {
+            await product.remove()
+            res.status(201).send({ description: "Product deleted" })
+        }
+        {
+            res.status(404).send({ description: "product not found" });
+        }
+
     } catch (error) {
         res.status(404).send({ description: error.message });
         console.log(error.message);
@@ -128,9 +117,8 @@ exports.get_products = async (req, res) => {
     try {
         const categoryId = req.query.categoryId
         if (categoryId) {
-            const existentCategory = await Category.findOne({ _id: categoryId });
-            if (existentCategory) {
-                const products = existentCategory.products;
+            const products = await Product.find({ categoryId: categoryId })
+            if (products) {
                 res.status(201).send(products.map(product => {
                     return {
                         id: product.id,
@@ -140,12 +128,11 @@ exports.get_products = async (req, res) => {
                         price: product.price
                     }
                 }));
-
             } else {
                 res.status(404).send({ message: "Category doens't exist" });
             }
         } else {
-            // TODO: get all products
+            res.status(201).send(await Product.find({}));
         }
 
     } catch (error) {

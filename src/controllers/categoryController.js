@@ -45,7 +45,7 @@ exports.create_category = async (req, res) => {
 		res.status(400).send({ description: error.message });
 	}
 };
-
+// TODO aggiornare prodotti
 exports.update_category = async (req, res) => {
 	try {
 		const categoryId = req.params.categoryId;
@@ -66,6 +66,7 @@ exports.update_category = async (req, res) => {
 	}
 };
 
+// TODO aggiornare prodotti
 exports.delete_category = async (req, res) => {
 	try {
 		const categoryId = req.params.categoryId;
