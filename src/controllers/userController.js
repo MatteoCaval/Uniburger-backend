@@ -1,6 +1,7 @@
 const User = require('../models/userModel')
 const bcrypt = require('bcryptjs')
 const Category = require("../models/categoryModel");
+const Product = require("../models/productModel");
 const Order = require('../models/orderModel')
 
 // TODO estrarre parte di generazione token e hash password, queste sono solo prove
@@ -40,17 +41,18 @@ exports.add_product_to_cart = async (req, res) => {
 exports.get_user_cart_products = async (req, res) => {
     try {
         const user = req.user
-        const products = await Promise.all(user.cart.map(async cartItem => {
-            const matchingProduct = await Category.findProductById(cartItem.productId)
-            return { ...(matchingProduct.toObject()), quantity: cartItem.quantity }
-        }))
+        // const products = await Promise.all(user.cart.map(async cartItem => {
+        //     const matchingProduct = await Category.findProductById(cartItem.productId)
+        //     return { ...(matchingProduct.toObject()), quantity: cartItem.quantity }
+        // }))
+        const productIds = user.cart.map(prod => prod.productId)
+        const products = await Product.find({"_id": {$in : productIds}})
         res.status(200).send(products.map(prod => {
             return {
                 id: prod._id,
                 name: prod.name,
                 price: prod.price,
-                image: prod.image,
-                quantity: prod.quantity
+                image: prod.image
             }
         }))
     } catch (e) {
