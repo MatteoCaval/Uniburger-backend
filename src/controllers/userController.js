@@ -43,6 +43,25 @@ exports.add_product_to_cart = async (req, res) => {
     }
 }
 
+exports.delete_product_from_cart = async (req, res) => {
+    try {
+        const user = req.user
+        const productId = req.params.productId
+        user.cart = user.cart.filter(product => {
+            return product._id != productId
+        })
+        await user.save()
+        res.status(200).send({ desription: 'product removed from cart' })
+    } catch (error) {
+        res.status(400).send({ description: 'Error deleting cart product' })
+    }
+}
+
+exports.update_cart_product = async (req, res) => {
+
+}
+
+
 exports.get_user_cart_products = async (req, res) => {
     try {
         const user = req.user

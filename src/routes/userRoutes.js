@@ -13,4 +13,8 @@ module.exports = (app) => {
         .post(auth, userController.add_product_to_cart)
         .get(auth, userController.get_user_cart_products)
 
+    app.route('/user/cart/:productId')
+        .delete(auth, userController.delete_product_from_cart)
+        .put(auth, userController.update_cart_product)
+
 }
