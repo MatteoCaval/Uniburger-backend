@@ -42,7 +42,7 @@ exports.add_product_to_cart = async (req, res) => {
         res.status(400).send({ description: 'Error adding product to cart' })
     }
 }
-
+// TODO da sistemare con query fatte bene
 exports.delete_product_from_cart = async (req, res) => {
     try {
         const user = req.user
@@ -57,8 +57,25 @@ exports.delete_product_from_cart = async (req, res) => {
     }
 }
 
+// TODO da sistemare con query fatte bene
 exports.update_cart_product = async (req, res) => {
-
+    try {
+        const user = req.user
+        const productId = req.params.productId
+        const { quantity } = req.body
+        user.cart = user.cart.map(product => {
+            if (product.productId != productId) {
+                return product
+            } else {
+                product.quantity = quantity
+                return product
+            }
+        })
+        await user.save()
+        res.status(200).send({ description: 'cart product updated' })
+    } catch (error) {
+        res.status(400).send({ description: 'Error deleting cart product' })
+    }
 }
 
 
