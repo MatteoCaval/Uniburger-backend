@@ -56,7 +56,7 @@ const userSchema = mongoose.Schema({
     }
 })
 
-userSchema.methods.addProductToCart = async function (product) {
+userSchema.methods.addProductToCart = async function (product, quantity) {
     const user = this
     const alreadyAddedProduct = await user.cart.find(elem => elem.productId.toString() == product._id.toString())
     if (alreadyAddedProduct) {
@@ -64,7 +64,7 @@ userSchema.methods.addProductToCart = async function (product) {
     } else {
         user.cart = user.cart.concat({
             productId: product._id,
-            quantity: 1,
+            quantity: quantity,
             name: product.name,
             image: product.image,
             price: product.price

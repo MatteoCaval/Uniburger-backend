@@ -28,11 +28,11 @@ exports.delete_user = async (req, res) => {
 exports.add_product_to_cart = async (req, res) => {
     try {
         const user = req.user
-        const { productId } = req.body
+        const { productId, quantity } = req.body
         // controllare se prodotto esiste
         const product = await Product.findById(productId)
         if (product) {
-            await user.addProductToCart(product)
+            await user.addProductToCart(product, quantity)
             res.status(200).send({ desription: `product added` })
         } else {
             res.status(404).send({ description: 'Product not found' })
