@@ -2,17 +2,23 @@ const Order = require('../models/orderModel')
 
 exports.placeOrder = async (req, res) => {
     try {
+
+        const { name, surname, address, timeSlot, telephoneNumber, paymentType} = req.body
+        console.log(req.body)
+        
         const user = req.user
         const order = new Order({
+            name,
+            surname,
             userId: user._id,
             totalPrice: 50,
-            address: 'fake address',
+            address,
             creationDate: Date(),
             date: Date(),
-            time: Date(),
-            telephoneNumber: '0541931041',
+            time: timeSlot,
+            telephoneNumber,
             state: 'PENDING',
-            paymentType: '#RESTIAMOACASA',
+            paymentType,
             products: user.cart.map(product => {
                 return {
                     name: 'nome temporaneo in attesa di reperirlo',
