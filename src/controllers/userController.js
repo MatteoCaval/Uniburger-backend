@@ -87,7 +87,8 @@ exports.get_user_cart_products = async (req, res) => {
                 id: cartProduct.productId,
                 quantity: cartProduct.quantity,
                 image: cartProduct.image,
-                name: cartProduct.name
+                name: cartProduct.name,
+                price: cartProduct.price
             }
         }))
     } catch (e) {

@@ -45,6 +45,9 @@ const userSchema = mongoose.Schema({
         },
         image: {
             type: String
+        },
+        price: {
+            type: Number
         }
     }],
     role: {
@@ -63,7 +66,9 @@ userSchema.methods.addProductToCart = async function (product) {
             productId: product._id,
             quantity: 1,
             name: product.name,
-            image: product.image })
+            image: product.image,
+            price: product.price
+        })
     }
     await user.save()
 }
