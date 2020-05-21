@@ -3,9 +3,9 @@ const Order = require('../models/orderModel')
 exports.placeOrder = async (req, res) => {
     try {
 
-        const { name, surname, address, timeSlot, telephoneNumber, paymentType} = req.body
+        const { name, surname, address, city, timeSlot, telephoneNumber, paymentType} = req.body
         console.log(req.body)
-        
+
         const user = req.user
         const order = new Order({
             name,
@@ -13,6 +13,7 @@ exports.placeOrder = async (req, res) => {
             userId: user._id,
             totalPrice: 50,
             address,
+            city,
             creationDate: Date(),
             date: Date(),
             time: timeSlot,
