@@ -51,7 +51,7 @@ exports.delete_product_from_cart = async (req, res) => {
         console.log(user.cart.cartItems)
 
         user.cart.cartItems = user.cart.cartItems.filter((product) => {
-            if (product.productId == productId){
+            if (product.productId == productId) {
                 user.cart.total = user.cart.total - product.price * product.quantity
             }
 
@@ -95,10 +95,11 @@ exports.update_cart_product = async (req, res) => {
 }
 
 
-exports.get_user_cart_products = async (req, res) => {
+exports.get_user_cart = async (req, res) => {
     try {
         const user = req.user
-        res.status(200).send(user.cart.cartItems.map(cartProduct => {
+
+        const cartItems = user.cart.cartItems.map(cartProduct => {
             return {
                 id: cartProduct.productId,
                 quantity: cartProduct.quantity,
@@ -106,7 +107,14 @@ exports.get_user_cart_products = async (req, res) => {
                 name: cartProduct.name,
                 price: cartProduct.price
             }
-        }))
+        })
+
+        res.status(200).send(
+            {
+            total: user.cart.total,
+            cartItems
+            })
+
     } catch (e) {
         console.log(e)
         res.status(400).send({ description: 'Error adding product to cart' })
