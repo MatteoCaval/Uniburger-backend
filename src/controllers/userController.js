@@ -47,21 +47,12 @@ exports.delete_product_from_cart = async (req, res) => {
     try {
         const user = req.user
         const productId = req.params.productId
-        console.log(productId)
-        console.log(user.cart.cartItems)
-
-        user.cart.cartItems = user.cart.cartItems.filter((product) => {
-            if (product.productId == productId) {
-                user.cart.total = user.cart.total - product.price * product.quantity
-            }
-
+        user.cart = user.cart.filter(product => {
             return product.productId != productId
         })
-
         await user.save()
         res.status(200).send({ description: 'product removed from cart' })
     } catch (error) {
-        console.log(error)
         res.status(400).send({ description: 'Error deleting cart product' })
     }
 }
@@ -72,25 +63,18 @@ exports.update_cart_product = async (req, res) => {
         const user = req.user
         const productId = req.params.productId
         const { quantity } = req.body
-
-        user.cart.cartItems = user.cart.cartItems.map(product => {
+        user.cart = user.cart.map(product => {
             if (product.productId != productId) {
                 return product
             } else {
-                const deltaQuantity = quantity - product.quantity
-
                 product.quantity = quantity
-                user.cart.total = user.cart.total + product.price * deltaQuantity
-
                 return product
             }
         })
-
         await user.save()
         res.status(200).send({ description: 'cart product updated' })
     } catch (error) {
-        console.log(error)
-        res.status(400).send({ description: 'Error updating cart product' })
+        res.status(400).send({ description: 'Error deleting cart product' })
     }
 }
 
@@ -98,8 +82,7 @@ exports.update_cart_product = async (req, res) => {
 exports.get_user_cart = async (req, res) => {
     try {
         const user = req.user
-
-        const cartItems = user.cart.cartItems.map(cartProduct => {
+        const cartProducts = user.cart.map(cartProduct => {
             return {
                 id: cartProduct.productId,
                 quantity: cartProduct.quantity,
@@ -111,8 +94,8 @@ exports.get_user_cart = async (req, res) => {
 
         res.status(200).send(
             {
-            total: user.cart.total,
-            cartItems
+            total: 1000,
+            cartProducts
             })
 
     } catch (e) {

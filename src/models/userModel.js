@@ -30,31 +30,26 @@ const userSchema = mongoose.Schema({
             required: true
         }
     }],
-    cart: {
-        total: {
-            type: Number
+    cart: [{
+        productId: {
+            type: mongoose.ObjectId,
+            required: true,
         },
-        cartItems: [{
-            productId: {
-                type: mongoose.ObjectId,
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            },
-            name: {
-                type: String,
-                required: true
-            },
-            image: {
-                type: String
-            },
-            price: {
-                type: Number
-            }
-        }]
-    },
+        quantity: {
+            type: Number,
+            required: true,
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        image: {
+            type: String
+        },
+        price: {
+            type: Number
+        }
+    }],
     role: {
         type: String,
         required: true,
@@ -63,19 +58,11 @@ const userSchema = mongoose.Schema({
 
 userSchema.methods.addProductToCart = async function (product, quantity) {
     const user = this
-    console.log(user.cart.cartItems)
-
-    if (!user.cart.total){
-        user.cart.total = 0
-    }
-
-    user.cart.total = user.cart.total + product.price * quantity
-
-    const alreadyAddedProduct = await user.cart.cartItems.find(elem => elem.productId.toString() == product._id.toString())
+    const alreadyAddedProduct = await user.cart.find(elem => elem.productId.toString() == product._id.toString())
     if (alreadyAddedProduct) {
         alreadyAddedProduct.quantity++
     } else {
-        user.cart.cartItems = user.cart.cartItems.concat({
+        user.cart = user.cart.concat({
             productId: product._id,
             quantity: quantity,
             name: product.name,
