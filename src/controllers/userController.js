@@ -100,7 +100,7 @@ exports.get_user_cart = async (req, res) => {
 
     } catch (e) {
         console.log(e)
-        res.status(400).send({ description: 'Error adding product to cart' })
+        res.status(400).send({ description: 'Error retrieving user cart' })
     }
 }
 
