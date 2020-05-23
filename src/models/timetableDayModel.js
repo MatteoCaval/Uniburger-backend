@@ -1,42 +1,62 @@
 const mongoose = require('mongoose')
 
 const timetableSchema = mongoose.Schema({
-    day: {
+    name: {
         type: String,
         required: true
     },
-    launchTimeStart: {
-        hour: {
-            type: Number
+    launchOpen: {
+        type: Boolean,
+        required: true
+    },
+    dinnerOpen: {
+        type: Boolean,
+        required: true
+    },
+    launch: {
+        timeStart: {
+            hour: {
+                type: Number,
+                required: true
+            },
+            minute: {
+                type: Number,
+                required: true
+            }
         },
-        minute: {
-            type: Number
+        timeEnd: {
+            hour: {
+                type: Number,
+                required: true
+            },
+            minute: {
+                type: Number,
+                required: true
+            }
         }
     },
-    launchTimeEnd: {
-        hour: {
-            type: Number
+    dinner: {
+        timeStart: {
+            hour: {
+                type: Number,
+                required: true
+            },
+            minute: {
+                type: Number,
+                required: true
+            }
         },
-        minute: {
-            type: Number
+        timeEnd: {
+            hour: {
+                type: Number,
+                required: true
+            },
+            minute: {
+                type: Number,
+                required: true
+            }
         }
     },
-    dinnerTimeStart: {
-        hour: {
-            type: Number
-        },
-        minute: {
-            type: Number
-        }
-    },
-    dinnerTimeEnd: {
-        hour: {
-            type: Number
-        },
-        minute: {
-            type: Number
-        }
-    }
 })
 const TimetableDay = mongoose.model('TimetableDay', timetableSchema, 'Timetable')
 
