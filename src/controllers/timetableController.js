@@ -30,8 +30,8 @@ exports.update_timetable = async (req, res) => {
                 name: day.name,
                 launchOpen: day.launchOpen,
                 dinnerOpen: day.dinnerOpen,
-                launch: {...day.launch},
-                dinner: {...day.dinner}
+                ...(day.launchOpen && {launch: {...day.launch}}),
+                ...(day.dinnerOpen && {dinner: {...day.dinner}})
             })
         })
 
