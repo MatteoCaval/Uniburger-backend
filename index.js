@@ -23,14 +23,16 @@ const authRoutes = require('./src/routes/authRoutes')
 const catalogRoutes = require('./src/routes/catalogRoutes')
 const ordersRoutes = require('./src/routes/ordersRoutes')
 const timetableRoutes = require('./src/routes/timetableRoutes')
+const ridersRoutes = require('./src/routes/ridersRoutes')
 
 userRoutes(app)
 authRoutes(app)
 catalogRoutes(app)
 ordersRoutes(app)
 timetableRoutes(app)
+ridersRoutes(app)
 
-app.use((req,res) => {
+app.use((req, res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
 })
 
