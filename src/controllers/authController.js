@@ -68,6 +68,12 @@ exports.delete_user = async (req, res) => {
     try {
         const user = req.user
         const userId = req.params.userId
+        if (user && userId) {
+            await User.deleteOne({ _id: userId })
+            res.status(200).send({ description: 'User deleted' })
+        } else {
+            res.status(400).send({ description: 'Error deleting user' })
+        }
 
     } catch (e) {
         res.status(400).send({ description: 'Error deleting user' })
