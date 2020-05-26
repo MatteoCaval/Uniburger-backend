@@ -1,10 +1,29 @@
 const User = require('../models/userModel')
-const bcrypt = require('bcryptjs')
-const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 const Order = require('../models/orderModel')
 
-// TODO estrarre parte di generazione token e hash password, queste sono solo prove
+
+exports.get_users = (userRole) => {
+    return async (req, res) => {
+        try {
+            const user = req.user
+            if (!user) {
+                res.status(403).send({ description: 'Error retrieving users' })
+            }
+            const users = await User.find({ 'role': userRole })
+            res.status(200).send(users.map(user => {
+                return {
+                    id: user._id,
+                    name: user.name,
+                    surname: user.surname,
+                    email: user.email
+                }
+            }))
+        } catch (e) {
+            res.status(400).send({ description: 'Error retrieving users' })
+        }
+    }
+}
 
 exports.get_user = async (req, res) => {
     const { name, email } = req.user
@@ -21,9 +40,6 @@ exports.get_user_orders = async (req, res) => {
     }
 }
 
-exports.delete_user = async (req, res) => {
-    // TODO
-}
 
 exports.add_product_to_cart = async (req, res) => {
     try {
@@ -94,8 +110,8 @@ exports.get_user_cart = async (req, res) => {
 
         res.status(200).send(
             {
-            total: 1000,
-            cartProducts
+                total: 1000,
+                cartProducts
             })
 
     } catch (e) {

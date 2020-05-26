@@ -31,32 +31,49 @@ exports.logout = async (req, res) => {
     }
 }
 
-exports.signup = async (req, res) => {
-    try {
-        const { email, password, name, surname, role } = req.body
+exports.signup = (role) => {
+    return async (req, res) => {
+        try {
+            if (role === 'rider' && !req.user) {
+                res.status(403).send({ description: 'cannot crete user, permission denied' })
+            }
 
-        const registeredUser = await User.findOne({ email })
-        if (registeredUser) {
-            res.status(400).send({ description: 'User already present' })
+            const { email, password, name, surname } = req.body
+
+            const registeredUser = await User.findOne({ email })
+            if (registeredUser) {
+                res.status(400).send({ description: 'User already present' })
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 8)
+            const user = new User({
+                email,
+                password: hashedPassword,
+                name,
+                surname,
+                role
+            })
+            await user.save()
+            const token = await user.generateAuthToken()
+            res.status(201).send({ email, token })
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).send({ description: error.message })
         }
-
-        const hashedPassword = await bcrypt.hash(password, 8)
-        const user = new User({
-            email,
-            password: hashedPassword,
-            name,
-            surname,
-            role
-        })
-        await user.save()
-        const token = await user.generateAuthToken()
-        res.status(201).send({ email, token })
-
-    } catch (error) {
-        console.log(error)
-        res.status(400).send({ description: error.message })
     }
 }
+
+exports.delete_user = async (req, res) => {
+    try {
+        const user = req.user
+        const userId = req.params.userId
+
+    } catch (e) {
+        res.status(400).send({ description: 'Error deleting user' })
+    }
+}
+
 
 
 
