@@ -10,7 +10,8 @@ exports.signin = async (req, res) => {
         res.send({
             name: user.name,
             email: user.email,
-            token: user.token
+            token: user.token,
+            role: user.role
         })
 
     } catch (error) {
@@ -55,7 +56,7 @@ exports.signup = (role) => {
             })
             await user.save()
             const token = await user.generateAuthToken()
-            res.status(201).send({ email, token })
+            res.status(201).send({ email, token, role })
 
         } catch (error) {
             console.log(error)
