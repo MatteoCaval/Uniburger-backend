@@ -108,9 +108,14 @@ exports.get_user_cart = async (req, res) => {
             }
         })
 
+        const total = 0
+        cartProducts.array.forEach(product => {
+            total += product.price * product.quantity
+        });
+
         res.status(200).send(
             {
-                total: 1000,
+                total,
                 cartProducts
             })
 
