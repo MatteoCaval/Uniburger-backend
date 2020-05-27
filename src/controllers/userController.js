@@ -108,8 +108,8 @@ exports.get_user_cart = async (req, res) => {
             }
         })
 
-        const total = 0
-        cartProducts.array.forEach(product => {
+        let total = 0
+        cartProducts.forEach(product => {
             total += product.price * product.quantity
         });
 
