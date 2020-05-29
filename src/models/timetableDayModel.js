@@ -17,21 +17,21 @@ const timetableSchema = mongoose.Schema({
         timeStart: {
             hour: {
                 type: Number,
-                required: true
+                required: function() {return this.launchOpen === true}
             },
             minute: {
                 type: Number,
-                required: true
+                required: function() {return this.launchOpen === true}
             }
         },
         timeEnd: {
             hour: {
                 type: Number,
-                required: true
+                required: function() {return this.launchOpen === true}
             },
             minute: {
                 type: Number,
-                required: true
+                required: function() {return this.launchOpen === true}
             }
         }
     },
@@ -39,21 +39,21 @@ const timetableSchema = mongoose.Schema({
         timeStart: {
             hour: {
                 type: Number,
-                required: true
+                required: function() {return this.dinnerOpen === true}
             },
             minute: {
                 type: Number,
-                required: true
+                required: function() {return this.dinnerOpen === true}
             }
         },
         timeEnd: {
             hour: {
                 type: Number,
-                required: true
+                required: function() {return this.dinnerOpen === true}
             },
             minute: {
                 type: Number,
-                required: true
+                required: function() {return this.dinnerOpen === true}
             }
         }
     },

@@ -21,17 +21,19 @@ exports.get_timetable = async (req, res) => {
 
 exports.update_timetable = async (req, res) => {
     try {
-        const days = req.body;
+        console.log(req.body)
+        const days = req.body.timetable;
+
         await TimetableDay.deleteMany({})
 
         const lista = days.map(day => {
-            
+
             return new TimetableDay({
                 name: day.name,
                 launchOpen: day.launchOpen,
                 dinnerOpen: day.dinnerOpen,
-                ...(day.launchOpen && {launch: {...day.launch}}),
-                ...(day.dinnerOpen && {dinner: {...day.dinner}})
+                ...(day.launchOpen && { launch: { ...day.launch } }),
+                ...(day.dinnerOpen && { dinner: { ...day.dinner } })
             })
         })
 
@@ -47,6 +49,24 @@ exports.update_timetable = async (req, res) => {
     }
 }
 
-exports.get_day = async (req, res) => {
-    // TODO
+exports.get_today_timetable = async (req, res) => {
+    const todayIndex = new Date().getDay() - 1;
+    var weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+    var name = weekday[todayIndex];
+
+    console.log(todayIndex)
+    const todayTimetable = await TimetableDay.findOne({name});
+
+    if (todayTimetable) {
+        res.status(201).send({
+            name: todayTimetable.name,
+            launchOpen: todayTimetable.launchOpen,
+            dinnerOpen: todayTimetable.dinnerOpen,
+            launch: todayTimetable.launch,
+            dinner: todayTimetable.dinner
+        });
+    } else {
+        res.status(404).send({ message: "Cannot find today timetable" });
+    }
 }
