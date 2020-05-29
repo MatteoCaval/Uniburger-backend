@@ -55,7 +55,6 @@ exports.get_today_timetable = async (req, res) => {
 
     var name = weekday[todayIndex];
 
-    console.log(todayIndex)
     const todayTimetable = await TimetableDay.findOne({name});
 
     if (todayTimetable) {
