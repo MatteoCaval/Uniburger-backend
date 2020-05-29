@@ -3,7 +3,7 @@ const Order = require('../models/orderModel')
 exports.placeOrder = async (req, res) => {
     try {
 
-        const { name, surname, address, city, timeSlot, telephoneNumber, paymentType} = req.body
+        const { name, surname, address, city, timeSlot, telephoneNumber, paymentType } = req.body
         console.log(req.body)
 
         const user = req.user
@@ -46,11 +46,22 @@ exports.updateOrder = async (req, res) => {
 }
 
 exports.getOrders = async (req, res) => {
-    // try {
-    //     const user = req.user
-    //
-    // } catch (error) {
-        res.status(400).send({ description: 'not implemented yet' })
-    // }
+    try {
+        const pageNumber = req.query.page
+        const perPage = 5
+        const user = req.user
+        const count = await Order.count()
+        const orders = await Order.find()
+            .skip(pageNumber > 0 ? ((pageNumber - 1) * perPage) : 0)
+            .limit(perPage)
+        res.status(200).send({
+            page: pageNumber,
+            pageCount: Math.ceil(count / perPage),
+            orders: orders
+        })
+
+    } catch (error) {
+        res.status(400).send({ description: '' })
+    }
 
 }
