@@ -7,11 +7,17 @@ exports.placeOrder = async (req, res) => {
         console.log(req.body)
 
         const user = req.user
+
+        let total = 0
+        user.cart.forEach(product => {
+            total += product.price * product.quantity
+        });
+
         const order = new Order({
             name,
             surname,
             userId: user._id,
-            totalPrice: 50,
+            totalPrice: total,
             address,
             city,
             creationDate: Date(),
@@ -22,10 +28,9 @@ exports.placeOrder = async (req, res) => {
             paymentType,
             products: user.cart.map(product => {
                 return {
-                    name: 'nome temporaneo in attesa di reperirlo',
+                    name: product.name,
                     quantity: product.quantity,
-                    price: 555
-
+                    price: product.price
                 }
             })
         })
