@@ -1,3 +1,9 @@
+const UserRoleTypes = {
+    ADMIN: 'admin',
+    CONSUMER: 'consumer',
+    RIDER: 'rider'
+}
+
 const Order = require('../models/orderModel')
 
 exports.placeOrder = async (req, res) => {
@@ -47,13 +53,21 @@ exports.updateOrder = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
     try {
+        const user = req.user
+        if (user.role === UserRoleTypes.RIDER) {
+            res.status(403).send({ description: 'Unauthorized' })
+            return
+        }
+
         const pageNumber = req.query.page
         const perPage = 5
-        const user = req.user
-        const count = await Order.count()
-        const orders = await Order.find()
+
+        const count = await (user.role === UserRoleTypes.ADMIN ? Order.count() : Order.count({ userId: user._id }))
+
+        const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find() : Order.find({ userId: user._id }))
             .skip(pageNumber > 0 ? ((pageNumber - 1) * perPage) : 0)
             .limit(perPage)
+
         res.status(200).send({
             page: pageNumber,
             pageCount: Math.ceil(count / perPage),
@@ -61,7 +75,7 @@ exports.getOrders = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).send({ description: '' })
+        res.status(400).send({ description: error.message })
     }
 
 }

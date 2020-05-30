@@ -1,9 +1,10 @@
 module.exports = (app) => {
     const userController = require('../controllers/userController')
+    const orderController = require('../controllers/ordersController')
     const auth = require('../middlewares/authMiddleware')
 
     app.route('/user/orders')
-        .get(auth, userController.get_user_orders)
+        .get(auth, orderController.getOrders)
 
     app.route('/user')
         .get(auth, userController.get_user)

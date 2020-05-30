@@ -30,17 +30,6 @@ exports.get_user = async (req, res) => {
     res.status(200).send({ name, email })
 }
 
-exports.get_user_orders = async (req, res) => {
-    try {
-        const user = req.user
-        const userOrders = await Order.find({ userId: user._id })
-        res.status(200).send(userOrders)
-    } catch (error) {
-        res.status(400).send({ description: error.message })
-    }
-}
-
-
 exports.add_product_to_cart = async (req, res) => {
     try {
         const user = req.user
