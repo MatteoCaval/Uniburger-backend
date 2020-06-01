@@ -11,11 +11,16 @@ module.exports = function (io) {
 
     let connectedAdmins = []
 
+    const pushNewOrder = (order) => {
+        connectedAdmins.forEach(admin => {
+            io.to(admin.id).emit('newOrder', order)
+        })
+    }
+
     const pushPendingOrders = () => {
         Order.getPendingOrders()
             .then(
                 result => {
-                    // io.emit('orders', result)
                     connectedAdmins.forEach(admin => {
                         io.to(admin.id).emit('orders', result)
                     })
@@ -44,8 +49,6 @@ module.exports = function (io) {
         try {
 
             const { name, surname, address, city, timeSlot, telephoneNumber, paymentType } = req.body
-            console.log(req.body)
-
             const user = req.user
 
             let total = 0
@@ -79,7 +82,7 @@ module.exports = function (io) {
             user.cart = []
             await user.save()
             res.status(201).send({ description: 'Order completed' })
-            pushPendingOrders()
+            pushNewOrder(order)
 
         } catch (error) {
             res.status(400).send({ description: error.message })
