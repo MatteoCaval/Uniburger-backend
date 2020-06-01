@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const config = require('./src/config')
 const cors = require('cors')
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 
 mongoose.connect(
@@ -37,16 +39,15 @@ app.use((req, res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
 })
 
-const server = app.listen(config.LISTEN_PORT, () => {
-    console.log(`listening on port ${config.LISTEN_PORT}`);
-});
-
-
-const io = require('socket.io').listen(server);
-
 io.on('connection', socket => {
     console.log(`user connected ${socket}`)
     io.emit('prova', 'benvenuto')
 
     socket.on('disconnect', () => console.log('user disconnected'))
 })
+
+http.listen(config.LISTEN_PORT, () => {
+    console.log(`listening on port ${config.LISTEN_PORT}`);
+});
+
+
