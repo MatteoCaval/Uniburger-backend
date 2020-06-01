@@ -16,7 +16,7 @@ const orderSchema = mongoose.Schema({
     address: {
         type: String,
         required: true,
-    },    
+    },
     city: {
         type: String,
         required: true,
@@ -67,8 +67,8 @@ const orderSchema = mongoose.Schema({
     ],
 })
 
-orderSchema.statics.getPendingOrders = async function() {
-    const orders = await Order.find({state: 'PENDING'})
+orderSchema.statics.getOrdersByStates = async (states) => {
+    const orders = await Order.find({ state: { $in: states } })
     return orders
 }
 

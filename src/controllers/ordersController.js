@@ -5,6 +5,9 @@ const UserRoleTypes = {
 }
 
 const Order = require('../models/orderModel')
+const jwt = require('jsonwebtoken')
+const User = require('../models/userModel')
+const config = require('../config')
 
 const OrderStatus = {
     PENDING: 'PENDING',
@@ -26,6 +29,7 @@ const getOrderStateIndex = (status) => {
 module.exports = function (io) {
 
     let connectedAdmins = []
+    let connectedRiders = []
 
     const pushNewOrder = (order) => {
         connectedAdmins.forEach(admin => {
@@ -34,7 +38,7 @@ module.exports = function (io) {
     }
 
     const pushPendingOrders = () => {
-        Order.getPendingOrders()
+        Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
             .then(
                 result => {
                     connectedAdmins.forEach(admin => {
@@ -45,8 +49,16 @@ module.exports = function (io) {
             ).catch(e => console.log(e.message))
     }
 
-    io.on('connection', socket => {
+    io.on('connection', async socket => {
 
+        const token = socket.request._query['token']
+        console.log(token)
+        const data = jwt.verify(token, config.TOKEN_SECRET)
+        const user = await User.findOne({ _id: data._id, 'tokens.token': token })
+        if (!user) {
+            throw new Error('No corresponding user')
+        }
+        console.log(user.role)
 
         connectedAdmins = [...connectedAdmins, socket]
         console.log(`user connected ${connectedAdmins.length}`)
