@@ -6,20 +6,39 @@ const UserRoleTypes = {
 
 const Order = require('../models/orderModel')
 
+
 module.exports = function (io) {
 
-    // io.on('connection', socket => {
-    //     console.log(`user connected ${socket}`)
-    //     io.emit('prova', 'benvenuto')
-    //
-    //     Order.getPendingOrders()
-    //         .then(
-    //             result => io.emit('orders', result)
-    //         ).catch(e => console.log(e.message))
-    //
-    //     io.emit('orders',)
-    //     socket.on('disconnect', () => console.log('user disconnected'))
-    // })
+    let connectedAdmins = []
+
+    const pushPendingOrders = () => {
+        Order.getPendingOrders()
+            .then(
+                result => {
+                    // io.emit('orders', result)
+                    connectedAdmins.forEach(admin => {
+                        io.to(admin.id).emit('orders', result)
+                    })
+
+                }
+            ).catch(e => console.log(e.message))
+    }
+
+    io.on('connection', socket => {
+
+
+        connectedAdmins = [...connectedAdmins, socket]
+        console.log(`user connected ${connectedAdmins.length}`)
+
+        pushPendingOrders()
+
+
+        socket.on('disconnect', () => {
+            connectedAdmins = connectedAdmins.filter(admin => admin.id !== socket.id)
+            console.log(`user connected ${connectedAdmins.length}`)
+        })
+
+    })
 
     const placeOrder = async (req, res) => {
         try {
@@ -60,6 +79,7 @@ module.exports = function (io) {
             user.cart = []
             await user.save()
             res.status(201).send({ description: 'Order completed' })
+            pushPendingOrders()
 
         } catch (error) {
             res.status(400).send({ description: error.message })
