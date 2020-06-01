@@ -7,7 +7,6 @@ const cors = require('cors')
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-
 mongoose.connect(
     config.MONGO_URI, // test nome del database, non della collection
     {
@@ -27,10 +26,10 @@ const ordersRoutes = require('./src/routes/ordersRoutes')
 const timetableRoutes = require('./src/routes/timetableRoutes')
 const ridersRoutes = require('./src/routes/ridersRoutes')
 
-userRoutes(app)
+userRoutes(app, io)
 authRoutes(app)
 catalogRoutes(app)
-ordersRoutes(app)
+ordersRoutes(app, io)
 timetableRoutes(app)
 ridersRoutes(app)
 
@@ -39,12 +38,6 @@ app.use((req, res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
 })
 
-io.on('connection', socket => {
-    console.log(`user connected ${socket}`)
-    io.emit('prova', 'benvenuto')
-
-    socket.on('disconnect', () => console.log('user disconnected'))
-})
 
 http.listen(config.LISTEN_PORT, () => {
     console.log(`listening on port ${config.LISTEN_PORT}`);

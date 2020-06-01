@@ -67,6 +67,11 @@ const orderSchema = mongoose.Schema({
     ],
 })
 
+orderSchema.statics.getPendingOrders = async function() {
+    const orders = await Order.find({state: 'PENDING'})
+    return orders
+}
+
 const Order = mongoose.model('Order', orderSchema, 'Orders')
 
 module.exports = Order
