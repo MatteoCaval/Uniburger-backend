@@ -32,10 +32,21 @@ ordersRoutes(app)
 timetableRoutes(app)
 ridersRoutes(app)
 
+
 app.use((req, res) => {
     res.status(404).send({ description: req.originalUrl + ' not found' });
 })
 
-app.listen(config.LISTEN_PORT, () => {
+const server = app.listen(config.LISTEN_PORT, () => {
     console.log(`listening on port ${config.LISTEN_PORT}`);
 });
+
+
+const io = require('socket.io').listen(server);
+
+io.on('connection', socket => {
+    console.log(`user connected ${socket}`)
+    io.emit('prova', 'benvenuto')
+
+    socket.on('disconnect', () => console.log('user disconnected'))
+})
