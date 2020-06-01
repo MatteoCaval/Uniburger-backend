@@ -58,14 +58,83 @@ exports.get_today_timetable = async (req, res) => {
     const todayTimetable = await TimetableDay.findOne({name});
 
     if (todayTimetable) {
-        res.status(201).send({
-            name: todayTimetable.name,
-            launchOpen: todayTimetable.launchOpen,
-            dinnerOpen: todayTimetable.dinnerOpen,
-            launch: todayTimetable.launch,
-            dinner: todayTimetable.dinner
-        });
+        let launchSlots = []
+        let dinnerSlots = []
+
+        let now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+
+        if (todayTimetable.launchOpen){
+            launchSlots = generateSlots(todayTimetable.launch.timeStart, todayTimetable.launch.timeEnd, now)
+        }
+
+
+        if (todayTimetable.dinnerOpen){
+            dinnerSlots = generateSlots(todayTimetable.dinner.timeStart, todayTimetable.dinner.timeEnd, now)
+        }
+
+        const slots = launchSlots.concat(dinnerSlots);
+
+        let filteredSlots = slots.filter(slot => {
+            if (slot.hour >= currentHour){
+                return true;
+            }
+
+            if (slot.hour == currentHour && slot.minute >= currentMinute){
+                return true;
+            }
+
+            return false;
+        })
+
+        res.status(201).send(filteredSlots.map(slot => {
+            return slot.hour + ":" + (slot.minute == 0 ? "00": slot.minute)
+        }));
+
     } else {
         res.status(404).send({ message: "Cannot find today timetable" });
     }
+}
+
+const generateSlots = (start, end)  => {
+    const hourStart = start.hour;
+    const minutesStart = start.minute;
+    const hourEnd = end.hour;
+    const minutesEnd = end.minute;    
+    
+	const slots = [];
+	var slices = [0, 30];
+
+	if (minutesStart == 30) {
+		slots.push({
+            hour: hourStart,
+            minute: minutesStart
+        });
+
+		hourStart++;
+	}
+
+	for (var i = hourStart; i < hourEnd; i++) {
+		for (var j = 0; j < slices.length; j++) {
+			slots.push({
+                hour: i,
+                minute: slices[j]
+            });
+		}
+	}
+
+	slots.push({
+        hour: hourEnd,
+        minute: 0
+    });
+
+	if (minutesEnd == 30) {
+		slots.push({
+            hour: hourEnd,
+            minute: minutesEnd
+        });
+	}
+
+	return slots;
 }
