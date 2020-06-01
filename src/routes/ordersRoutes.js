@@ -6,4 +6,7 @@ module.exports = (app, io) => {
         .post(auth, ordersController.placeOrder)
         .put(auth, ordersController.updateOrder)
         .get(auth, ordersController.getOrders)
+
+    app.route('/user/orders')
+        .get(auth, ordersController.getOrders)
 }

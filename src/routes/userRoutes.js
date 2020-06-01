@@ -1,10 +1,6 @@
-module.exports = (app, io) => {
+module.exports = (app) => {
     const userController = require('../controllers/userController')
-    const orderController = require('../controllers/ordersController')(io)
     const auth = require('../middlewares/authMiddleware')
-
-    app.route('/user/orders')
-        .get(auth, orderController.getOrders)
 
     app.route('/user')
         .get(auth, userController.get_user)

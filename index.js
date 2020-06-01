@@ -26,7 +26,7 @@ const ordersRoutes = require('./src/routes/ordersRoutes')
 const timetableRoutes = require('./src/routes/timetableRoutes')
 const ridersRoutes = require('./src/routes/ridersRoutes')
 
-userRoutes(app, io)
+userRoutes(app)
 authRoutes(app)
 catalogRoutes(app)
 ordersRoutes(app, io)
