@@ -6,6 +6,22 @@ const UserRoleTypes = {
 
 const Order = require('../models/orderModel')
 
+const OrderStatus = {
+    PENDING: 'PENDING',
+    IN_DELIVERY: 'IN_DELIVERY',
+    DELIVERED: 'DELIVERED'
+}
+
+const getOrderStateIndex = (status) => {
+    switch (status) {
+        case OrderStatus.PENDING:
+            return 0;
+        case OrderStatus.IN_DELIVERY:
+            return 1;
+        case OrderStatus.DELIVERED:
+            return 2;
+    }
+}
 
 module.exports = function (io) {
 
@@ -89,9 +105,27 @@ module.exports = function (io) {
         }
     }
 
-// qui potremmo passare id e order state: consegnato, in consegna
     const updateOrder = async (req, res) => {
-        res.status(400).send({ description: 'not implemented yet' })
+        try {
+            const { order_id, status: state } = req.body;
+            const order = await Order.findOne({ _id: order_id });
+            if (order) {
+                const orderStatus = order.state;
+                if (getOrderStateIndex(orderStatus) > state){
+                    res.status(400).send({ description: 'Cannot update to a previous state' })
+                } else {
+                    order.state = state;
+                    await order.save();
+                    res.status(201).send({ description: 'Order status updated' })
+                }
+            } else {
+                res.status(400).send({ description: 'Order doesn\'t exist'})
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(400).send({ description: error.message })
+        }
+        
     }
 
     const getOrders = async (req, res) => {
@@ -129,4 +163,5 @@ module.exports = function (io) {
     }
 
 }
+
 
