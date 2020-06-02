@@ -17,6 +17,12 @@ module.exports = class LiveOrdersHandler {
         })
     }
 
+    orderUpdated(order) {
+        this.connectedAdmins.forEach(admin => {
+            this.io.to(admin.id).emit('orderUpdated', order)
+        })
+    }
+
     pushPendingOrders() {
         Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
             .then(

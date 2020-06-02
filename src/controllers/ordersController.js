@@ -72,7 +72,7 @@ module.exports = function (io) {
 
     const updateOrder = async (req, res) => {
         try {
-            const { order_id, status: state } = req.body;
+            const { order_id, state } = req.body
             const order = await Order.findOne({ _id: order_id });
             if (order) {
                 const orderStatus = order.state;
@@ -82,12 +82,12 @@ module.exports = function (io) {
                     order.state = state;
                     await order.save();
                     res.status(201).send({ description: 'Order status updated' })
+                    liveOrdersManager.orderUpdated(order)
                 }
             } else {
                 res.status(400).send({ description: 'Order doesn\'t exist' })
             }
         } catch (error) {
-            console.log(error)
             res.status(400).send({ description: error.message })
         }
 
