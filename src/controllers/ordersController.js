@@ -6,13 +6,8 @@ const UserRoleTypes = {
 
 const Order = require('../models/orderModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
+const OrderStatus = require('./orderStatus')
 
-
-const OrderStatus = {
-    PENDING: 'PENDING',
-    IN_DELIVERY: 'IN_DELIVERY',
-    DELIVERED: 'DELIVERED'
-}
 
 const getOrderStateIndex = (status) => {
     switch (status) {

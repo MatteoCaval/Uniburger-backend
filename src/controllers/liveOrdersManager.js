@@ -2,12 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const config = require('../config')
 const Order = require('../models/orderModel')
-
-const OrderStatus = {
-    PENDING: 'PENDING',
-    IN_DELIVERY: 'IN_DELIVERY',
-    DELIVERED: 'DELIVERED'
-}
+const OrderStatus = require('./orderStatus')
 
 module.exports = class LiveOrdersHandler {
     constructor(io) {
