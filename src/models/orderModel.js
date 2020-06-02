@@ -5,10 +5,6 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    name: {
-        type: String,
-        required: true,
-    },
     totalPrice: {
         type: Number,
         required: true,
@@ -48,6 +44,14 @@ const orderSchema = mongoose.Schema({
     paymentType: {
         type: String,
         required: true,
+    },
+    rider: {
+        id: {
+            type: String
+        },
+        completeName: {
+            type: String
+        }
     },
     products: [
         {
