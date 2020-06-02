@@ -5,9 +5,8 @@ const UserRoleTypes = {
 }
 
 const Order = require('../models/orderModel')
-const jwt = require('jsonwebtoken')
-const User = require('../models/userModel')
-const config = require('../config')
+const LiveOrdersHandler = require('./liveOrdersManager')
+
 
 const OrderStatus = {
     PENDING: 'PENDING',
@@ -26,52 +25,11 @@ const getOrderStateIndex = (status) => {
     }
 }
 
+
 module.exports = function (io) {
 
-    let connectedAdmins = []
-    let connectedRiders = []
-
-    const pushNewOrder = (order) => {
-        connectedAdmins.forEach(admin => {
-            io.to(admin.id).emit('newOrder', order)
-        })
-    }
-
-    const pushPendingOrders = () => {
-        Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
-            .then(
-                result => {
-                    connectedAdmins.forEach(admin => {
-                        io.to(admin.id).emit('orders', result)
-                    })
-
-                }
-            ).catch(e => console.log(e.message))
-    }
-
-    io.on('connection', async socket => {
-
-        const token = socket.request._query['token']
-        console.log(token)
-        const data = jwt.verify(token, config.TOKEN_SECRET)
-        const user = await User.findOne({ _id: data._id, 'tokens.token': token })
-        if (!user) {
-            throw new Error('No corresponding user')
-        }
-        console.log(user.role)
-
-        connectedAdmins = [...connectedAdmins, socket]
-        console.log(`user connected ${connectedAdmins.length}`)
-
-        pushPendingOrders()
-
-
-        socket.on('disconnect', () => {
-            connectedAdmins = connectedAdmins.filter(admin => admin.id !== socket.id)
-            console.log(`user connected ${connectedAdmins.length}`)
-        })
-
-    })
+    const liveOrdersManager = new LiveOrdersHandler(io)
+    liveOrdersManager.init()
 
     const placeOrder = async (req, res) => {
         try {
@@ -95,7 +53,7 @@ module.exports = function (io) {
                 date: Date(),
                 time: timeSlot,
                 telephoneNumber,
-                state: 'PENDING',
+                state: OrderStatus.PENDING,
                 paymentType,
                 products: user.cart.map(product => {
                     return {
@@ -110,7 +68,7 @@ module.exports = function (io) {
             user.cart = []
             await user.save()
             res.status(201).send({ description: 'Order completed' })
-            pushNewOrder(order)
+            liveOrdersManager.pushNewOrder(order)
 
         } catch (error) {
             res.status(400).send({ description: error.message })
@@ -123,7 +81,7 @@ module.exports = function (io) {
             const order = await Order.findOne({ _id: order_id });
             if (order) {
                 const orderStatus = order.state;
-                if (getOrderStateIndex(orderStatus) > state){
+                if (getOrderStateIndex(orderStatus) > state) {
                     res.status(400).send({ description: 'Cannot update to a previous state' })
                 } else {
                     order.state = state;
@@ -131,13 +89,13 @@ module.exports = function (io) {
                     res.status(201).send({ description: 'Order status updated' })
                 }
             } else {
-                res.status(400).send({ description: 'Order doesn\'t exist'})
+                res.status(400).send({ description: 'Order doesn\'t exist' })
             }
         } catch (error) {
             console.log(error)
             res.status(400).send({ description: error.message })
         }
-        
+
     }
 
     const getOrders = async (req, res) => {
