@@ -23,7 +23,8 @@ module.exports = class LiveOrdersHandler {
         })
     }
 
-    pushPendingOrders() {
+
+    pushNonCompetedOrders() {
         Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
             .then(
                 result => {
@@ -50,7 +51,7 @@ module.exports = class LiveOrdersHandler {
             this.connectedAdmins = [...this.connectedAdmins, socket]
             console.log(`user connected ${this.connectedAdmins.length}`)
 
-            this.pushPendingOrders()
+            this.pushNonCompetedOrders()
 
 
             socket.on('disconnect', () => {
