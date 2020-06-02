@@ -5,6 +5,7 @@ const UserRoleTypes = {
 }
 
 const Order = require('../models/orderModel')
+const User = require('../models/userModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
 const OrderStatus = require('./orderStatus')
 
@@ -72,13 +73,31 @@ module.exports = function (io) {
 
     const updateOrder = async (req, res) => {
         try {
-            const { order_id, state } = req.body
+            const user = req.user
+            const { order_id, state, rider_id } = req.body
             const order = await Order.findOne({ _id: order_id });
             if (order) {
                 const orderStatus = order.state;
                 if (getOrderStateIndex(orderStatus) > state) {
                     res.status(400).send({ description: 'Cannot update to a previous state' })
                 } else {
+
+                    if (state === OrderStatus.IN_DELIVERY) {
+                        if (!rider_id) {
+                            res.status(400).send({ description: 'Rider id must be specified when updating order to in delivery' })
+                            return
+                        }
+                        const riderUser = await User.findById(rider_id)
+                        console.log(riderUser)
+                        if (!riderUser) {
+                            res.status(400).send({ description: 'No corresponding rider' })
+                            return
+                        }
+                        order.rider = {
+                            id: riderUser._id,
+                            completeName: `${riderUser.name} ${riderUser.surname}`
+                        }
+                    }
                     order.state = state;
                     await order.save();
                     res.status(201).send({ description: 'Order status updated' })
