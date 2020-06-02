@@ -76,6 +76,11 @@ orderSchema.statics.getOrdersByStates = async (states) => {
     return orders
 }
 
+orderSchema.statics.getRiderOrders = async (userRiderId) => {
+    const orders = await Order.find({ "rider.id": userRiderId })
+    return orders
+}
+
 const Order = mongoose.model('Order', orderSchema, 'Orders')
 
 module.exports = Order

@@ -1,13 +1,9 @@
-const UserRoleTypes = {
-    ADMIN: 'admin',
-    CONSUMER: 'consumer',
-    RIDER: 'rider'
-}
 
 const Order = require('../models/orderModel')
 const User = require('../models/userModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
 const OrderStatus = require('./orderStatus')
+const UserRoleTypes = require('./userRoles')
 
 
 const getOrderStateIndex = (status) => {

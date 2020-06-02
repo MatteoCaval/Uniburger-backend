@@ -3,6 +3,7 @@ const User = require('../models/userModel')
 const config = require('../config')
 const Order = require('../models/orderModel')
 const OrderStatus = require('./orderStatus')
+const UserRoleType = require('./userRoles')
 
 module.exports = class LiveOrdersHandler {
     constructor(io) {
@@ -21,42 +22,62 @@ module.exports = class LiveOrdersHandler {
         this.connectedAdmins.forEach(admin => {
             this.io.to(admin.id).emit('orderUpdated', order)
         })
+
+        // da testare
+        if ([OrderStatus.IN_DELIVERY, OrderStatus.DELIVERED].includes(order.state)) {
+            this.connectedRiders
+                .filter(riderSocket => riderSocket.riderId === order.rider.id)
+                .forEach(riderSocket => {
+                    riderSocket.emit('orderUpdated', order)
+                })
+        }
     }
 
 
-    pushNonCompetedOrders() {
+    pushOrdersToRider(socket, riderId) {
+        Order.getRiderOrders(riderId)
+            .then(orders => {
+                socket.emit('orders', orders)
+            })
+            .catch(e => console.log(e.message))
+    }
+
+    pushOrderToAdmin(socket) {
         Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
             .then(
                 result => {
-                    this.connectedAdmins.forEach(admin => {
-                        this.io.to(admin.id).emit('orders', result)
-                    })
-
+                    socket.emit('orders', result)
                 }
             ).catch(e => console.log(e.message))
     }
 
     init() {
         this.io.on('connection', async socket => {
-
             const token = socket.request._query['token']
-            console.log(token)
             const data = jwt.verify(token, config.TOKEN_SECRET)
             const user = await User.findOne({ _id: data._id, 'tokens.token': token })
+            const userRole = user.role
             if (!user) {
                 throw new Error('No corresponding user')
             }
-            console.log(user.role)
 
-            this.connectedAdmins = [...this.connectedAdmins, socket]
-            console.log(`user connected ${this.connectedAdmins.length}`)
+            if (userRole === UserRoleType.ADMIN) {
+                this.connectedAdmins = [...this.connectedAdmins, socket]
+                this.pushOrderToAdmin(socket)
+            } else if (userRole === UserRoleType.RIDER) {
+                socket.riderId = user._id
+                this.connectedRiders = [...this.connectedRiders, socket]
+                this.pushOrdersToRider(socket, user._id)
+            }
 
-            this.pushNonCompetedOrders()
+
+            console.log(`admin connected ${this.connectedAdmins.length} - riders ${this.connectedRiders.length}`)
 
 
             socket.on('disconnect', () => {
                 this.connectedAdmins = this.connectedAdmins.filter(admin => admin.id !== socket.id)
-                console.log(`user connected ${this.connectedAdmins.length}`)
+                this.connectedRiders = this.connectedRiders.filter(rider => rider.id !== rider.id)
+                console.log(`admin connected ${this.connectedAdmins.length} - riders ${this.connectedRiders.length}`)
             })
 
         })
