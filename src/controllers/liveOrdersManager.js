@@ -25,9 +25,11 @@ module.exports = class LiveOrdersHandler {
 
         // da testare
         if ([OrderStatus.IN_DELIVERY, OrderStatus.DELIVERED].includes(order.state)) {
+            console.log('rider to update')
             this.connectedRiders
-                .filter(riderSocket => riderSocket.riderId === order.rider.id)
+                .filter(riderSocket => riderSocket.riderId == order.rider.id)
                 .forEach(riderSocket => {
+                    console.log('updating rider')
                     riderSocket.emit('orderUpdated', order)
                 })
         }
