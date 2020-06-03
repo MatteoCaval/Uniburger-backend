@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const OrderStatus = require('../controllers/orderStatus')
 
 const orderSchema = mongoose.Schema({
     name: {
@@ -77,7 +78,7 @@ orderSchema.statics.getOrdersByStates = async (states) => {
 }
 
 orderSchema.statics.getRiderOrders = async (userRiderId) => {
-    const orders = await Order.find({ "rider.id": userRiderId })
+    const orders = await Order.find({ "rider.id": userRiderId, state: OrderStatus.IN_DELIVERY })
     return orders
 }
 
