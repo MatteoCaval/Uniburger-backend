@@ -1,4 +1,3 @@
-
 const Order = require('../models/orderModel')
 const User = require('../models/userModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
@@ -110,6 +109,10 @@ module.exports = function (io) {
 
     const getOrders = async (req, res) => {
         try {
+            // order state filter
+            const filterStates = req.query.state
+            const stateFilter = filterStates ? { state: { $in: filterStates } } : {}
+
             const user = req.user
             if (user.role === UserRoleTypes.RIDER) {
                 res.status(403).send({ description: 'Unauthorized' })
@@ -119,8 +122,8 @@ module.exports = function (io) {
             const pageNumber = req.query.page
             const perPage = 5
 
-            const count = await (user.role === UserRoleTypes.ADMIN ? Order.count() : Order.count({ userId: user._id }))
-            const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find() : Order.find({ userId: user._id }))
+            const count = await (user.role === UserRoleTypes.ADMIN ? Order.count(stateFilter) : Order.count({ userId: user._id,  ...stateFilter }))
+            const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find(stateFilter) : Order.find({ userId: user._id, ...stateFilter }))
                 .skip(pageNumber > 0 ? ((pageNumber - 1) * perPage) : 0)
                 .limit(perPage)
 
@@ -131,6 +134,7 @@ module.exports = function (io) {
             })
 
         } catch (error) {
+            console.log(error.message)
             res.status(400).send({ description: error.message })
         }
 
