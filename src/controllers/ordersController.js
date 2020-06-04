@@ -33,6 +33,10 @@ module.exports = function (io) {
                 total += product.price * product.quantity
             });
 
+            if (!user.cart.length) {
+                res.status(400).send({ description: 'Order informations non valid' })
+            }
+
             const order = new Order({
                 name,
                 surname,
