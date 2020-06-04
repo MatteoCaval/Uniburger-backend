@@ -72,21 +72,26 @@ module.exports = function (io) {
 
     const updateOrder = async (req, res) => {
         try {
-            const user = req.user
-            const { order_id, state, rider_id } = req.body
-            const order = await Order.findOne({ _id: order_id });
+            const { state, riderId } = req.body
+            const orderId = req.params.orderId;
+            
+            console.log("Entro in update")
+            const order = await Order.findOne({ _id: orderId });
             if (order) {
                 const orderStatus = order.state;
                 if (getOrderStateIndex(orderStatus) > state) {
                     res.status(400).send({ description: 'Cannot update to a previous state' })
+                    return;
                 } else {
+                    console.log(riderId)
+                    console.log(state)
 
                     if (state === OrderStatus.IN_DELIVERY) {
-                        if (!rider_id) {
+                        if (!riderId) {
                             res.status(400).send({ description: 'Rider id must be specified when updating order to in delivery' })
                             return
                         }
-                        const riderUser = await User.findById(rider_id)
+                        const riderUser = await User.findById(riderId)
                         console.log(riderUser)
                         if (!riderUser) {
                             res.status(400).send({ description: 'No corresponding rider' })
@@ -94,9 +99,15 @@ module.exports = function (io) {
                         }
                         order.rider = {
                             id: riderUser._id,
-                            completeName: `${riderUser.name} ${riderUser.surname}`
+                            name: riderUser.name,
+                            surname: riderUser.surname
                         }
                     }
+
+                    if (state === OrderStatus.PENDING) {
+                        order.rider = null
+                    }
+
                     order.state = state;
                     await order.save();
                     res.status(201).send({ description: 'Order status updated' })
@@ -104,9 +115,11 @@ module.exports = function (io) {
                 }
             } else {
                 res.status(400).send({ description: 'Order doesn\'t exist' })
+                return
             }
         } catch (error) {
             res.status(400).send({ description: error.message })
+            console.log(error)
         }
 
     }

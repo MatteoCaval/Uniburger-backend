@@ -50,7 +50,10 @@ const orderSchema = mongoose.Schema({
         id: {
             type: String
         },
-        completeName: {
+        name: {
+            type: String
+        },
+        surname: {
             type: String
         }
     },
