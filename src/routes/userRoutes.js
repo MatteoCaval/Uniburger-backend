@@ -2,7 +2,7 @@ module.exports = (app) => {
     const userController = require('../controllers/userController')
     const auth = require('../middlewares/authMiddleware')
 
-    app.route('/user')
+    app.route('/user/current')
         .get(auth, userController.get_user)
 
     app.route('/user/cart')
