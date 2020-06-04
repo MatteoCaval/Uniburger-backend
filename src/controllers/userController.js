@@ -26,8 +26,8 @@ exports.get_users = (userRole) => {
 }
 
 exports.get_user = async (req, res) => {
-    const { name, email } = req.user
-    res.status(200).send({ name, email })
+    const { name, email, role, surname } = req.user
+    res.status(200).send({ name, email, role, surname })
 }
 
 exports.add_product_to_cart = async (req, res) => {
