@@ -78,8 +78,8 @@ module.exports = class LiveOrdersHandler {
 
             socket.on('disconnect', () => {
                 this.connectedAdmins = this.connectedAdmins.filter(admin => admin.id !== socket.id)
-                this.connectedRiders = this.connectedRiders.filter(rider => rider.id !== rider.id)
-                console.log(`admin connected ${this.connectedAdmins.length} - riders ${this.connectedRiders.length}`)
+                this.connectedRiders = this.connectedRiders.filter(rider => rider.id !== socket.id)
+                console.log(`after disconnect - admin connected ${this.connectedAdmins.length} - riders ${this.connectedRiders.length}`)
             })
 
         })
