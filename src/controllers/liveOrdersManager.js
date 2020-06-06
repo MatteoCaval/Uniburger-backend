@@ -18,23 +18,19 @@ module.exports = class LiveOrdersHandler {
         })
     }
 
-    orderUpdated(order) {
-        this.connectedAdmins.forEach(admin => {
-            this.io.to(admin.id).emit('orderUpdated', order)
+    notifyOrderUpdateToAdmins = (order) => {
+        this.connectedAdmins.forEach(adminSockets => {
+            adminSockets.emit('orderUpdated', order)
         })
-
-        // da testare
-        if ([OrderStatus.IN_DELIVERY, OrderStatus.DELIVERED].includes(order.state)) {
-            console.log('rider to update')
-            this.connectedRiders
-                .filter(riderSocket => riderSocket.riderId == order.rider.id)
-                .forEach(riderSocket => {
-                    console.log('updating rider')
-                    riderSocket.emit('orderUpdated', order)
-                })
-        }
     }
 
+    notifyOrderUpdateToRider = (order, riderId) => {
+        this.connectedRiders
+            .filter(riderSocket => riderSocket.riderId == riderId)
+            .forEach(riderSocket => {
+                riderSocket.emit('orderUpdated', order)
+            })
+    }
 
     pushOrdersToRider(socket, riderId) {
         Order.getRiderOrders(riderId)

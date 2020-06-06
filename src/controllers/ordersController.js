@@ -73,7 +73,9 @@ module.exports = function (io) {
             const { state, riderId } = req.body
             const orderId = req.params.orderId;
 
-            console.log("Entro in update")
+            // used to
+            let riderIdToNotify = null
+
             const order = await Order.findOne({ _id: orderId });
             if (order) {
                 const orderStatus = order.state;
@@ -81,16 +83,12 @@ module.exports = function (io) {
                     res.status(400).send({ description: 'Cannot update to a previous state' })
                     return;
                 } else {
-                    console.log(riderId)
-                    console.log(state)
-
                     if (state === OrderStatus.IN_DELIVERY) {
                         if (!riderId) {
                             res.status(400).send({ description: 'Rider id must be specified when updating order to in delivery' })
                             return
                         }
                         const riderUser = await User.findById(riderId)
-                        console.log(riderUser)
                         if (!riderUser) {
                             res.status(400).send({ description: 'No corresponding rider' })
                             return
@@ -102,6 +100,10 @@ module.exports = function (io) {
                         }
                     }
 
+                    if (order.rider) {
+                        riderIdToNotify = order.rider.id
+                    }
+
                     if (state === OrderStatus.PENDING) {
                         order.rider = null
                     }
@@ -109,15 +111,19 @@ module.exports = function (io) {
                     order.state = state;
                     await order.save();
                     res.status(201).send({ description: 'Order status updated' })
-                    liveOrdersManager.orderUpdated(order)
+                    liveOrdersManager.notifyOrderUpdateToAdmins(order)
+                    if (riderIdToNotify) {
+                        liveOrdersManager.notifyOrderUpdateToRider(order, riderIdToNotify)
+                    }
                 }
             } else {
                 res.status(400).send({ description: 'Order doesn\'t exist' })
                 return
             }
         } catch (error) {
+            console.log(error.message)
             res.status(400).send({ description: error.message })
-            console.log(error)
+
         }
 
     }
