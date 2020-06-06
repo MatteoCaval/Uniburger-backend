@@ -45,6 +45,7 @@ exports.signup = (role) => {
             const registeredUser = await User.findOne({ email })
             if (registeredUser) {
                 res.status(400).send({ description: 'User already present' })
+                return
             }
 
             const hashedPassword = await bcrypt.hash(password, 8)
