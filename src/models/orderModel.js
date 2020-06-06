@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const OrderStatus = require('../controllers/orderStatus')
 
 const orderSchema = mongoose.Schema({
-    name: {
+    userFullName: {
         type: String,
         required: true,
     },

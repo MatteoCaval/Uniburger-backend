@@ -24,7 +24,6 @@ module.exports = function (io) {
 
     const placeOrder = async (req, res) => {
         try {
-
             const { name, surname, address, city, timeSlot, telephoneNumber, paymentType } = req.body
             const user = req.user
 
@@ -38,8 +37,7 @@ module.exports = function (io) {
             }
 
             const order = new Order({
-                name,
-                surname,
+                userFullName: `${name} ${surname}`,
                 userId: user._id,
                 totalPrice: total,
                 address,
@@ -74,7 +72,7 @@ module.exports = function (io) {
         try {
             const { state, riderId } = req.body
             const orderId = req.params.orderId;
-            
+
             console.log("Entro in update")
             const order = await Order.findOne({ _id: orderId });
             if (order) {
@@ -139,7 +137,7 @@ module.exports = function (io) {
             const pageNumber = req.query.page
             const perPage = 5
 
-            const count = await (user.role === UserRoleTypes.ADMIN ? Order.count(stateFilter) : Order.count({ userId: user._id,  ...stateFilter }))
+            const count = await (user.role === UserRoleTypes.ADMIN ? Order.count(stateFilter) : Order.count({ userId: user._id, ...stateFilter }))
             const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find(stateFilter) : Order.find({ userId: user._id, ...stateFilter }))
                 .skip(pageNumber > 0 ? ((pageNumber - 1) * perPage) : 0)
                 .limit(perPage)
