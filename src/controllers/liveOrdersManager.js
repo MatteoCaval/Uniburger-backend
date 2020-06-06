@@ -18,13 +18,13 @@ module.exports = class LiveOrdersHandler {
         })
     }
 
-    notifyOrderUpdateToAdmins = (order) => {
+    notifyOrderUpdateToAdmins(order) {
         this.connectedAdmins.forEach(adminSockets => {
             adminSockets.emit('orderUpdated', order)
         })
     }
 
-    notifyOrderUpdateToRider = (order, riderId) => {
+    notifyOrderUpdateToRider(order, riderId) {
         this.connectedRiders
             .filter(riderSocket => riderSocket.riderId == riderId)
             .forEach(riderSocket => {
