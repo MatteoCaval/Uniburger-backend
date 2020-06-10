@@ -113,6 +113,13 @@ exports.delete_product = async (req, res) => {
 
         if (product) {
             await product.remove()
+
+            //remove user cart product
+            await User.update(
+                {},
+                { $pull: { cart: { productId: productId } } },
+                { multi: true })
+
             res.status(201).send({ description: "Product deleted" })
         }
         {
