@@ -1,3 +1,5 @@
+const adminAuth = require('../middlewares/adminAuthMiddleware')
+
 module.exports = (app) => {
     const categoryController = require("../controllers/categoryController");
     const productController = require("../controllers/productController");
@@ -5,16 +7,16 @@ module.exports = (app) => {
     app
         .route("/catalog/categories")
         .get(categoryController.get_categories)
-        .post(categoryController.create_category);
+        .post(/*adminAuth,*/ categoryController.create_category);
 
     app
         .route("/catalog/categories/:categoryId")
-        .put(categoryController.update_category)
-        .delete(categoryController.delete_category);
+        .put(adminAuth, categoryController.update_category)
+        .delete(adminAuth, categoryController.delete_category);
 
     app
         .route("/catalog/products")
-        .post(productController.add_product_to_category)
+        .post(adminAuth, productController.add_product_to_category)
         .get(productController.get_products);
 
     app
@@ -23,6 +25,6 @@ module.exports = (app) => {
 
     app
         .route("/catalog/products/:productId")
-        .put(productController.update_product)
-        .delete(productController.delete_product);
+        .put(adminAuth, productController.update_product)
+        .delete(adminAuth, productController.delete_product);
 };
