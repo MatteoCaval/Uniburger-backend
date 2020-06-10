@@ -1,4 +1,5 @@
 const Category = require("../models/categoryModel");
+const Product = require("../models/productModel");
 
 exports.get_categories = async (req, res) => {
     try {
@@ -66,15 +67,18 @@ exports.update_category = async (req, res) => {
     }
 };
 
-// TODO aggiornare prodotti
 exports.delete_category = async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
-        console.log(req.body);
 
         const existentCategory = await Category.findOne({ _id: categoryId })
 
         if (existentCategory) {
+            const categoryProductCount = await Product.count({ categoryId: categoryId })
+            if (categoryProductCount > 0) {
+                res.status(400).send({ description: 'Cannot delete category with products, first delete all those' })
+                return
+            }
             await Category.deleteOne(existentCategory);
             res.status(201).send({ message: "Category successfully deleted" });
         } else {
