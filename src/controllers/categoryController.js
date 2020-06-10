@@ -46,16 +46,22 @@ exports.create_category = async (req, res) => {
         res.status(400).send({ description: error.message });
     }
 };
-// TODO aggiornare prodotti
+
 exports.update_category = async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         const { name, image } = req.body;
-        console.log(req.body);
 
         const existentCategory = await Category.findOne({ _id: categoryId });
         if (existentCategory) {
             await Category.updateOne({ _id: categoryId }, { name: name, image: image });
+
+            // updates related products
+            await Product.updateMany({ categoryId: categoryId }, {
+                $set: {
+                    categoryName: name
+                }
+            })
 
             res.status(201).send({ message: "Category successfully updated" });
         } else {
