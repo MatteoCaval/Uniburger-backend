@@ -66,12 +66,15 @@ exports.update_product = async (req, res) => {
 
         const productId = req.params.productId;
         const product = await Product.findById(productId)
+        if (!product) {
+            res.status(404).send({ description: "Product not found" });
+        }
 
-        const prod_name = name != null ? name : product.name;
-        const prod_description = description != null ? description : product.description;
-        const prod_image = image != null ? image : product.image;
-        const prod_price = price != null ? price : product.price;
-        const prod_ingredients = ingredients != null ? ingredients : product.ingredients;
+        const prod_name = name ? name : product.name;
+        const prod_description = description ? description : product.description;
+        const prod_image = image ? image : product.image;
+        const prod_price = price ? price : product.price;
+        const prod_ingredients = ingredients ? ingredients : product.ingredients;
 
         await Product.updateOne(
             { _id: productId },
