@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
+const User = require('../models/userModel')
 
 exports.get_product = async (req, res) => {
     try {
@@ -86,6 +87,14 @@ exports.update_product = async (req, res) => {
                 ingredients: prod_ingredients,
             }
         );
+
+        await User.updateMany({ 'cart.productId': productId }, {
+            $set: {
+                'cart.$.image': prod_image,
+                'cart.$.name': prod_name,
+                'cart.$.price': prod_price
+            }
+        })
 
         res.status(201).send({ message: "Product updated" });
 
