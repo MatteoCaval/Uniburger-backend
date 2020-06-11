@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon",
-    "test": "jest"
+    "test": "jest --runInBand ./test"
   },
   "author": "",
   "license": "ISC",
@@ -21,5 +21,8 @@
     "@shelf/jest-mongodb": "^1.1.5",
     "jest": "^26.0.1",
     "nodemon": "^2.0.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
