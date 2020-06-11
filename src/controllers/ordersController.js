@@ -1,8 +1,8 @@
 const Order = require('../models/orderModel')
 const User = require('../models/userModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
-const OrderStatus = require('./orderStatus')
-const UserRoleTypes = require('./userRoles')
+const OrderStatus = require('./../common/orderStatus')
+const UserRoleTypes = require('./../common/userRoles')
 
 
 const getOrderStateIndex = (status) => {

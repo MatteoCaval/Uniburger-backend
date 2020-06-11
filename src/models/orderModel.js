@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const OrderStatus = require('../controllers/orderStatus')
+const OrderStatus = require('./../common/orderStatus')
 
 const orderSchema = mongoose.Schema({
     userFullName: {

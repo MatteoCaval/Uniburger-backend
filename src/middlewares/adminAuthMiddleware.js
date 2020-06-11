@@ -1,5 +1,5 @@
 const authMiddleware = require('./authMiddleware')
-const UserRoleTypes = require('../controllers/userRoles')
+const UserRoleTypes = require('../common/userRoles')
 
 const adminAuthMiddleware = async (req, res, next) => {
     try {

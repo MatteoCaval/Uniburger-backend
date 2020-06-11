@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const config = require('../config')
 const Order = require('../models/orderModel')
-const OrderStatus = require('./orderStatus')
-const UserRoleType = require('./userRoles')
+const OrderStatus = require('./../common/orderStatus')
+const UserRoleType = require('./../common/userRoles')
 
 module.exports = class LiveOrdersHandler {
     constructor(io) {
