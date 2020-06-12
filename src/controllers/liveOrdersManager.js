@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const config = require('../config')
 const Order = require('../models/orderModel')
-const OrderStatus = require('./../common/orderStatus')
+const OrderState = require('../common/orderState')
 const UserRoleType = require('./../common/userRoles')
 
 module.exports = class LiveOrdersHandler {
@@ -41,7 +41,7 @@ module.exports = class LiveOrdersHandler {
     }
 
     pushOrderToAdmin(socket) {
-        Order.getOrdersByStates([OrderStatus.PENDING, OrderStatus.IN_DELIVERY])
+        Order.getOrdersByStates([OrderState.PENDING, OrderState.IN_DELIVERY])
             .then(
                 result => {
                     socket.emit('orders', result)

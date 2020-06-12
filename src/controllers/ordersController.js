@@ -1,17 +1,17 @@
 const Order = require('../models/orderModel')
 const User = require('../models/userModel')
 const LiveOrdersHandler = require('./liveOrdersManager')
-const OrderStatus = require('./../common/orderStatus')
+const OrderState = require('../common/orderState')
 const UserRoleTypes = require('./../common/userRoles')
 
 
-const getOrderStateIndex = (status) => {
-    switch (status) {
-        case OrderStatus.PENDING:
+const getOrderStateIndex = (state) => {
+    switch (state) {
+        case OrderState.PENDING:
             return 0;
-        case OrderStatus.IN_DELIVERY:
+        case OrderState.IN_DELIVERY:
             return 1;
-        case OrderStatus.DELIVERED:
+        case OrderState.DELIVERED:
             return 2;
     }
 }
@@ -46,7 +46,7 @@ module.exports = function (io) {
                 date: Date(),
                 time: timeSlot,
                 telephoneNumber,
-                state: OrderStatus.PENDING,
+                state: OrderState.PENDING,
                 paymentType,
                 products: user.cart.map(product => {
                     return {
@@ -78,12 +78,12 @@ module.exports = function (io) {
 
             const order = await Order.findOne({ _id: orderId });
             if (order) {
-                const orderStatus = order.state;
-                if (getOrderStateIndex(orderStatus) > state) {
+                const orderState = order.state;
+                if (getOrderStateIndex(orderState) > state) {
                     res.status(400).send({ description: 'Cannot update to a previous state' })
                     return;
                 } else {
-                    if (state === OrderStatus.IN_DELIVERY) {
+                    if (state === OrderState.IN_DELIVERY) {
                         if (!riderId) {
                             res.status(400).send({ description: 'Rider id must be specified when updating order to in delivery' })
                             return
@@ -104,13 +104,13 @@ module.exports = function (io) {
                         riderIdToNotify = order.rider.id
                     }
 
-                    if (state === OrderStatus.PENDING) {
+                    if (state === OrderState.PENDING) {
                         order.rider = null
                     }
 
                     order.state = state;
                     await order.save();
-                    res.status(201).send({ description: 'Order status updated' })
+                    res.status(201).send({ description: 'Order state updated' })
                     liveOrdersManager.notifyOrderUpdateToAdmins(order)
                     if (riderIdToNotify) {
                         liveOrdersManager.notifyOrderUpdateToRider(order, riderIdToNotify)
