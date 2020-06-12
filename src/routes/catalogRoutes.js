@@ -7,7 +7,7 @@ module.exports = (app) => {
     app
         .route("/catalog/categories")
         .get(categoryController.get_categories)
-        .post(/*adminAuth,*/ categoryController.create_category);
+        .post(adminAuth, categoryController.create_category);
 
     app
         .route("/catalog/categories/:categoryId")
