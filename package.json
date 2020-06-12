@@ -21,9 +21,13 @@
   "devDependencies": {
     "@shelf/jest-mongodb": "^1.1.5",
     "jest": "^26.0.1",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

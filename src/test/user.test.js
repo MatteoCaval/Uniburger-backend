@@ -1,6 +1,8 @@
 const dbHandler = require('./db-handler')
-const User = require('../models/userModel');
 const UserRoles = require('../common/userRoles');
+const User = require('../models/userModel');
+const request = require('supertest')
+const app = require('./../../index.js')
 
 const consumerData = {
     name: 'ConsumerName',
@@ -9,8 +11,6 @@ const consumerData = {
     password: 'nonhashedpassword',
     role: UserRoles.CONSUMER,
 }
-
-const token = 'AAAAAAAAAAAAAAAAAAAA'
 
 const cartItem1 = {
     quantity: 2,
@@ -27,7 +27,9 @@ const cartItem2 = {
 }
 
 
-beforeAll(async () => await dbHandler.connect());
+beforeAll(async () => {
+    await dbHandler.connect()
+});
 
 afterEach(async () => {
     //await dbHandler.clearDatabase()
@@ -39,43 +41,59 @@ afterAll(async () => {
 });
 
 describe('User Model Test', () => {
+    it('Should create new user', async () => {
+        const res = await request(app)
+        .post('/auth/signup')
+        .query({role: UserRoles.CONSUMER})
+        .send(consumerData)
 
-    it('Create and save user successfully', async () => {
-
-        const newUser = new User(consumerData);
-        const savedUser = await newUser.save()
-
-        expect(savedUser._id).toBeDefined()
-        expect(savedUser.name).toBe(newUser.name)
-        expect(savedUser.surname).toBe(newUser.surname)
-        expect(savedUser.email).toBe(newUser.email)
-        expect(savedUser.password).toBe(newUser.password)
-        expect(savedUser.role).toBe(newUser.role)
-        expect(savedUser.tokens).toHaveLength(0);
+        expect(res.statusCode).toEqual(201)
+        expect(res.body).toHaveProperty('token')
     })
 
-    it('Add multiple tokens to a user', async () => {
-        const user = await User.findOne({ email: consumerData.email })
+    it('Should signin user', async () => {
+        const res = await request(app)
+        .post('/auth/signin')
+        .send({
+            email: consumerData.email,
+            password: consumerData.password
+        })
 
-        expect(user).toBeTruthy();
-
-        user.tokens.push({ token })
-        user.tokens.push({ token: "BBBBBBBBBBBBBBBBBBBBB" })
-
-        await user.save()
-        expect(user.tokens).toHaveLength(2);
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('token')
     })
 
-    it('Remove token from user', async () => {
-        const user = await User.findOne({ email: consumerData.email })
+    it ('Should add item to cart', async () => {
+        const user = await User.findUserByCredential(consumerData.email, consumerData.password)
 
-        expect(user).toBeTruthy();
+        const res = await request(app)
+        .post('/user/cart')
+        .send({
+            productId: '123abc123abc',
+            quantity: 2
+        })
 
-        user.tokens = user.tokens.filter(t => t.token !== token);
-
-        await user.save()
-        expect(user.tokens).toHaveLength(1);
+        expect(res.statusCode).toEqual(200)
     })
+
+
+    it('Should logout user', async () => {
+        const user = await User.findUserByCredential(consumerData.email, consumerData.password)
+        const res = await request(app)
+        .post('/auth/logout')
+        .send(user)
+
+        expect(res.statusCode).toEqual(200)
+    })
+
+
+
+
+    /*
+
+
+
+
 
     it('Add items to cart', async () => {
         const user = await User.findOne({ email: consumerData.email })
@@ -87,4 +105,5 @@ describe('User Model Test', () => {
         expect(user.cart).toHaveLength(2)
         expect(user.cart[0].quantity).toBe(2)
     })
+    */
 })
