@@ -7,17 +7,7 @@ exports.get_product = async (req, res) => {
         const productId = req.params.productId;
         const product = await Product.findById(productId)
         if (product) {
-            res.status(201).send({
-                    id: product.id,
-                    name: product.name,
-                    categoryId: product.categoryId,
-                    categoryName: product.categoryName,
-                    description: product.description,
-                    image: product.image,
-                    price: product.price,
-                    ingredients: product.ingredients
-                }
-            );
+            res.status(201).send(mapToResponseProduct(product));
         } else {
             res.status(404).send({ message: "Product not found" });
         }
@@ -27,6 +17,18 @@ exports.get_product = async (req, res) => {
     }
 };
 
+const mapToResponseProduct = (product) => {
+    return {
+        id: product.id,
+        name: product.name,
+        categoryId: product.categoryId,
+        categoryName: product.categoryName,
+        description: product.description,
+        image: product.image,
+        price: product.price,
+        ingredients: product.ingredients
+    }
+}
 exports.add_product_to_category = async (req, res) => {
     try {
         const {
@@ -51,7 +53,7 @@ exports.add_product_to_category = async (req, res) => {
                 categoryName: existentCategory.name
             })
             await product.save();
-            res.status(201).send({ message: `Product successfully added. Id: ${product._id}` });
+            res.status(201).send(mapToResponseProduct(product));
         } else {
             res.status(404).send({ message: "Category doens't exist" });
         }
@@ -96,7 +98,14 @@ exports.update_product = async (req, res) => {
             }
         })
 
-        res.status(201).send({ message: "Product updated" });
+        res.status(201).send({
+            ...mapToResponseProduct(product),
+            name: prod_name,
+            description: prod_description,
+            image: prod_image,
+            price: prod_price,
+            ingredients: prod_ingredients
+        });
 
     } catch (error) {
         res.status(404).send({ description: error.message });
@@ -138,17 +147,7 @@ exports.get_products = async (req, res) => {
         if (categoryId) {
             const products = await Product.find({ categoryId: categoryId })
             if (products) {
-                res.status(201).send(products.map(product => {
-                    return {
-                        id: product.id,
-                        name: product.name,
-                        description: product.description,
-                        image: product.image,
-                        price: product.price,
-                        categoryId: product.categoryId,
-                        categoryName: product.categoryName,
-                    }
-                }));
+                res.status(201).send(products.map(product => mapToResponseProduct(product)));
             } else {
                 res.status(404).send({ message: "Category doens't exist" });
             }

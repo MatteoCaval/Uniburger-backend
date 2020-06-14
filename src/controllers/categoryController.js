@@ -1,16 +1,18 @@
 const Category = require("../models/categoryModel");
 const Product = require("../models/productModel");
 
+const mapToResponseCategory = category => {
+    return {
+        id: category._id,
+        name: category.name,
+        image: category.image
+    }
+}
+
 exports.get_categories = async (req, res) => {
     try {
         const categories = await Category.find({});
-        res.status(201).send(categories.map(category => {
-            return {
-                id: category._id,
-                name: category.name,
-                image: category.image
-            }
-        }));
+        res.status(201).send(categories.map(category => mapToResponseCategory(category)));
     } catch (error) {
         console.log(error.message);
         res.status(400).send({ description: error.message });
@@ -40,7 +42,7 @@ exports.create_category = async (req, res) => {
 
         await category.save();
 
-        res.status(201).send({ message: `Category successfully created. Id: ${category._id}` });
+        res.status(201).send(mapToResponseCategory(category));
     } catch (error) {
         console.log(error.message);
         res.status(400).send({ description: error.message });
@@ -55,7 +57,6 @@ exports.update_category = async (req, res) => {
         const existentCategory = await Category.findOne({ _id: categoryId });
         if (existentCategory) {
             await Category.updateOne({ _id: categoryId }, { name: name, image: image });
-
             // updates related products
             await Product.updateMany({ categoryId: categoryId }, {
                 $set: {
@@ -63,7 +64,11 @@ exports.update_category = async (req, res) => {
                 }
             })
 
-            res.status(201).send({ message: "Category successfully updated" });
+            res.status(201).send({
+                ...mapToResponseCategory(existentCategory),
+                name: name,
+                image: image
+            });
         } else {
             res.status(400).send({ description: "Category doesn't exist" });
         }
