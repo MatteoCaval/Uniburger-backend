@@ -1,7 +1,5 @@
 const User = require('../models/userModel')
 const Product = require("../models/productModel");
-const Order = require('../models/orderModel')
-
 
 exports.get_users = (userRole) => {
     return async (req, res) => {
