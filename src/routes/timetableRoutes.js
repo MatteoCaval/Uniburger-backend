@@ -7,5 +7,5 @@ module.exports = (app) => {
         .put(auth, timetableController.update_timetable)
 
     app.route('/timetable/today')
-        .get(auth, timetableController.get_today_timetable)
+        .get(timetableController.get_today_timetable)
 }

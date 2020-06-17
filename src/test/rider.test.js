@@ -20,19 +20,19 @@ const rider2Data = {
     _id: ""
 }
 
+const adminData = {
+    email: "admin@test.it",
+    password: "admin",
+    name: 'Admin',
+    surname: 'Admin',
+    role: UserRoles.ADMIN
+}
+
 let adminToken = ""
 let riderToken = ""
 
 beforeAll(async () => {
     await dbHandler.connect()
-
-    const adminData = {
-        email: "admin@test.it",
-        password: "admin",
-        name: 'Admin',
-        surname: 'Admin',
-        role: UserRoles.ADMIN
-    }
 
     let hashedPassword = await bcrypt.hash(adminData.password, 8)
 

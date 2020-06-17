@@ -21,13 +21,11 @@ exports.get_timetable = async (req, res) => {
 
 exports.update_timetable = async (req, res) => {
     try {
-        console.log(req.body)
         const days = req.body.timetable;
 
         await TimetableDay.deleteMany({})
 
-        const lista = days.map(day => {
-
+        const dayList = days && days.map(day => {
             return new TimetableDay({
                 name: day.name,
                 launchOpen: day.launchOpen,
@@ -37,9 +35,7 @@ exports.update_timetable = async (req, res) => {
             })
         })
 
-        console.log(lista)
-
-        await TimetableDay.insertMany(lista)
+        await TimetableDay.insertMany(dayList)
 
         res.status(200).send({ message: "Timetable successfully updated" })
 
