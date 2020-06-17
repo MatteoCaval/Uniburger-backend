@@ -130,9 +130,11 @@ exports.delete_product = async (req, res) => {
                 { multi: true })
 
             res.status(201).send({ description: "Product deleted" })
+            return
         }
         {
             res.status(404).send({ description: "product not found" });
+            return
         }
 
     } catch (error) {

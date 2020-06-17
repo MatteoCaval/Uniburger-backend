@@ -8,6 +8,7 @@ module.exports = (app) => {
         .get(auth, userController.get_users('rider'))
         .post(auth, authController.signup('rider'))
 
+
     app.route('/riders/:userId')
-        .delete(adminAuth, authController.delete_user) //ok
+        .delete(adminAuth, authController.delete_user)
 }

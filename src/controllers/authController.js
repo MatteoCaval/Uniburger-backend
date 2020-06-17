@@ -36,8 +36,9 @@ exports.logout = async (req, res) => {
 exports.signup = (role) => {
     return async (req, res) => {
         try {
-            if (role === 'rider' && !req.user) {
+            if (role === 'rider'&& (!req.user || req.user.role !== 'admin')) {
                 res.status(403).send({ description: 'cannot crete user, permission denied' })
+                return
             }
 
             const { email, password, name, surname } = req.body

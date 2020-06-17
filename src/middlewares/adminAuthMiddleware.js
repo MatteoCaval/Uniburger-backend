@@ -6,7 +6,7 @@ const adminAuthMiddleware = async (req, res, next) => {
         await authMiddleware(req, res, () => {
 
             if (req.user.role !== UserRoleTypes.ADMIN) {
-                res.status(403).send({ description: 'User not and admin' })
+                res.status(403).send({ description: 'User is not an admin' })
             } else {
                 next()
             }
