@@ -34,7 +34,6 @@ exports.logout = async (req, res) => {
 }
 
 exports.signup = (role) => {
-    console.log()
     return async (req, res) => {
         try {
             if (role === 'rider' && !req.user) {

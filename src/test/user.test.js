@@ -1,6 +1,5 @@
 const dbHandler = require('./db-handler')
 const UserRoles = require('../common/userRoles');
-const User = require('../models/userModel');
 const request = require('supertest')
 const app = require('./../../index.js');
 const Category = require('../models/categoryModel');
@@ -10,8 +9,7 @@ const consumerData = {
     name: 'ConsumerName',
     surname: 'ConsumerSurname',
     email: 'consumer@test.it',
-    password: 'nonhashedpassword',
-    role: UserRoles.CONSUMER,
+    password: 'nonhashedpassword'
 }
 
 const testCategory = {
@@ -26,14 +24,7 @@ const product1 = {
     _id: ""
 }
 
-const product2 = {
-    name: "Product2",
-    image: "image/path/2",
-    price: 10
-}
-
 let token = ""
-
 
 beforeAll(async () => {
     await dbHandler.connect()
@@ -98,7 +89,6 @@ describe('User Model Test', () => {
         expect(res.body.email).toBe(consumerData.email)
         expect(res.body.name).toBe(consumerData.name)
         expect(res.body.surname).toBe(consumerData.surname)
-        expect(res.body.role).toBe(consumerData.role)         
 
         expect(res.statusCode).toEqual(200)
     })

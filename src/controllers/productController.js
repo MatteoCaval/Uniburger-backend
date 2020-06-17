@@ -136,8 +136,8 @@ exports.delete_product = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(404).send({ description: error.message });
         console.log(error.message);
+        res.status(404).send({ description: error.message });
     }
 };
 

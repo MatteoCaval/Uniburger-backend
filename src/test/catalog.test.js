@@ -1,30 +1,59 @@
 const dbHandler = require('./db-handler')
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
+const request = require('supertest')
+const app = require('./../../index.js');
+const userRoles = require('../common/userRoles');
+const User = require('../models/userModel');
+const bcrypt = require('bcryptjs')
+
+const adminCredentials = {
+    email: "admin@test.it",
+    password: "admin",
+    name: 'Admin',
+    surname: 'Admin',
+    role: userRoles.ADMIN
+}
 
 const category1 = {
     name: "Category1",
-    image: 'image/path/1'
-}
-const category2 = {
-    name: "Category2"
+    image: 'image/path/1',
+    _id: ""
 }
 
 const product1 = {
     name: "Product1",
     description: "Product 1 description",
     price: 25,
+    image: "image/path/1",
     ingredients: ["Acqua", "Farina", "Sale", "Pepe"]
 }
 
-
-const product2 = {
-    name: "Product2",
-    image: "image/path/2"
-}
+let adminToken = ""
 
 
-beforeAll(async () => await dbHandler.connect());
+beforeAll(async () => {
+    await dbHandler.connect()
+
+    const hashedPassword = await bcrypt.hash(adminCredentials.password, 8)
+    const user = new User({
+        email: adminCredentials.email,
+        password: hashedPassword,
+        name: adminCredentials.name,
+        surname: adminCredentials.surname,
+        role: userRoles.ADMIN
+    })
+    await user.save()
+
+    const res = await request(app)
+        .post('/auth/signin')
+        .send({
+            email: adminCredentials.email,
+            password: adminCredentials.password
+        })
+
+    adminToken = res.body.token
+});
 
 afterEach(async () => {
     //await dbHandler.clearDatabase()
@@ -36,66 +65,158 @@ afterAll(async () => {
 });
 
 describe('Category & Product Model Test', () => {
-    it('Create category', async () => {
-        const cat1 = new Category(category1)
-        const savedCat1 = await cat1.save()
-        expect(savedCat1._id).toBeDefined()
-        expect(savedCat1.name).toBe(category1.name)
-        expect(savedCat1.image).toBeDefined
 
-        const cat2 = new Category(category2)
-        const savedCat2 = await cat2.save()
-        expect(savedCat2._id).toBeDefined()
-        expect(savedCat2.name).toBe(category2.name)
-        expect(savedCat2.image).not.toBeDefined()
+    it('Should get categories', async () => {
+        const res = await request(app)
+            .get('/catalog/categories')
 
-        const count = await Category.count({})
-        expect(count).toBe(2);
+        expect(res.status).toEqual(201)
     })
 
-    it('Create product', async () => {
-        const cat1 = await Category.findOne({name: category1.name})
-        product1.categoryId = cat1._id
-        product1.categoryName = cat1.name
-        product2.categoryId = cat1._id
-        product2.categoryName = cat1.name
-        const prod1 = new Product(product1)
-        const savedProd1 = await prod1.save();
-        expect(savedProd1._id).toBeDefined()
-        expect(savedProd1.categoryId).toBe(cat1._id)
-        expect(savedProd1.categoryName).toBe(cat1.name)
-        expect(savedProd1.name).toBe(product1.name)
-        expect(savedProd1.description).toBe(product1.description)
-        expect(savedProd1.price).toBe(product1.price)
-        expect(savedProd1.ingredients).toHaveLength(4)
+    it('Admin should create new category', async () => {
+        const res = await request(app)
+            .post('/catalog/categories')
+            .set('Authorization', 'Bearer ' + adminToken)
+            .send({
+                name: category1.name,
+                image: category1.image
+            })
+        expect(res.status).toEqual(201)
 
-        const prod2 = new Product(product2)
-        const savedProd2 = await prod2.save()
-        expect(savedProd2._id).toBeDefined()
-        expect(savedProd2.categoryId).toBe(cat1._id)
-        expect(savedProd2.categoryName).toBe(cat1.name)
-        expect(savedProd2.name).toBe(product2.name)
-        expect(savedProd2.description).not.toBeDefined()
-        expect(savedProd2.image).toBe(product2.image)
-        expect(savedProd2.ingredients).toHaveLength(0)
+        const categoriesRes = await request(app)
+            .get('/catalog/categories')
 
-        const count = await Product.count({})
-        expect(count).toBe(2);
+        expect(categoriesRes.body).toHaveLength(1)
+        category1._id = categoriesRes.body[0].id;
     })
 
-    
-    it('Update product', async () => {
-        const prod1 = await Product.findOne({name: product1.name})
-        expect(prod1).toBeTruthy()
-        
-        prod1.price = 30
-        prod1.image = "image/path/1"
-        
-        prod1.ingredients = prod1.ingredients.filter(ingredient => ingredient !== "Sale");
-        const updatedProd = await prod1.save()
+    it('Admin should create product', async () => {
 
-        expect(updatedProd.image).toBeDefined();
-        expect(updatedProd.price).toBe(30);
-        expect(updatedProd.ingredients).toHaveLength(3)
+        const categoriesRes = await request(app)
+            .get('/catalog/categories')
+
+
+        expect(categoriesRes.body).toHaveLength(1)
+        const res = await request(app)
+        .post('/catalog/products')
+        .set('Authorization', 'Bearer ' + adminToken)
+        .send({
+            name: product1.name,
+            description: product1.description,
+            price: product1.price,
+            image: product1.image,
+            ingredients: product1.ingredients,
+            category_id: `${category1._id}`
+        })
+
+        expect(res.statusCode).toEqual(201)
+        const res2 = await request(app)
+        .get('/catalog/products')
+        .query({categoryId: `${category1._id}`})
+
+        expect(res2.body).toHaveLength(1)
+        product1._id = res2.body[0].id
+    })
+
+    it('Admin shouldn\'t delete not empty category', async () => {
+        const res = await request(app)
+            .delete('/catalog/categories/' + `${category1._id}`)
+            .set('Authorization', 'Bearer ' + adminToken)
+
+        expect(res.status).toEqual(400)
+    })
+
+    it('Should get category products', async () => {
+        const res = await request(app)
+        .get('/catalog/products')
+        .query({categoryId: `${category1._id}`})
+
+        expect(res.statusCode).toEqual(201)
+    })
+
+    it('Should get product info', async () => {
+        const res = await request(app)
+        .get('/catalog/products/' + `${product1._id}`)
+
+        expect(res.statusCode).toEqual(201)
+
+        expect(res.body.name).toBe(product1.name)
+        expect(res.body.categoryId).toBe(category1._id)
+        expect(res.body.categoryName).toBe(category1.name)
+        expect(res.body.description).toBe(product1.description)
+        expect(res.body.image).toBe(product1.image)
+        expect(res.body.price).toBe(product1.price)
+        expect(res.body.ingredients.length).toBe(product1.ingredients.length)
+    })
+
+    it('Admin should update product', async () => {
+
+        const newName = "New name"
+        const newDescription = "New description"
+        const newImage = "new/image/path"
+        const newPrice = 30
+        const newIngredients = ["Olio", "Farina"]
+
+        const res = await request(app)
+        .put('/catalog/products/' + `${product1._id}`)
+        .set('Authorization', 'Bearer ' + adminToken)
+        .send({
+            name: newName,
+            description: newDescription,
+            image: newImage,
+            price: newPrice,
+            ingredients: newIngredients
+        })
+        
+        expect(res.statusCode).toEqual(201)
+
+        const productInfoRes = await request(app)
+        .get('/catalog/products/' + `${product1._id}`)
+
+        expect(productInfoRes.body.name).toBe(newName)
+        expect(productInfoRes.body.description).toBe(newDescription)
+        expect(productInfoRes.body.image).toBe(newImage)
+        expect(productInfoRes.body.price).toBe(newPrice)
+        expect(productInfoRes.body.ingredients).toHaveLength(newIngredients.length)
+    })
+
+    it('Admin should delete product', async () => {
+        const res = await request(app)
+        .delete('/catalog/products/' + `${product1._id}`)
+        .set('Authorization', 'Bearer ' + adminToken)
+
+        expect(res.statusCode).toEqual(201)
+
+        const productsRes = await request(app)
+        .get('/catalog/products')
+        .query({categoryId: `${category1._id}`})
+
+        expect(productsRes.body).toHaveLength(0)
+    })
+
+    it('Admin should update category', async () => {
+        const newName = "NewCategory1"
+        const newImagePath = "new/image/path/1"
+        const res = await request(app)
+            .put('/catalog/categories/' + `${category1._id}`)
+            .set('Authorization', 'Bearer ' + adminToken)
+            .send({
+                name: newName,
+                image: newImagePath
+            })
+
+        expect(res.status).toEqual(201)
+    })
+
+    it('Admin should delete category', async () => {
+        const res = await request(app)
+            .delete('/catalog/categories/' + `${category1._id}`)
+            .set('Authorization', 'Bearer ' + adminToken)
+
+        expect(res.status).toEqual(201)
+        const categoriesRes = await request(app)
+            .get('/catalog/categories')
+
+        expect(categoriesRes.body).toHaveLength(0)
     })
 })

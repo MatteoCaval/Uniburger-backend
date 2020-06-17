@@ -25,7 +25,7 @@ exports.create_category = async (req, res) => {
         console.log(req.body);
 
         if (name == null) {
-            res.status(401).send({ message: "Wrong parameters" });
+            res.status(401).send({ description: "Wrong parameters" });
             return
         }
 
@@ -37,8 +37,8 @@ exports.create_category = async (req, res) => {
 
         const category = new Category({
             name,
-            image,
-        });
+            image
+        })
 
         await category.save();
 
