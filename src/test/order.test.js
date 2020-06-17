@@ -231,7 +231,6 @@ describe('Order Model Test', () => {
                 state: OrderState.IN_DELIVERY
             })
 
-        console.log({res})
         expect(res.statusCode).toEqual(201)
     })
 

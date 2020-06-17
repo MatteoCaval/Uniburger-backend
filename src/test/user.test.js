@@ -61,7 +61,6 @@ describe('User Model Test', () => {
     it('Should create new user', async () => {
         const res = await request(app)
         .post('/auth/signup')
-        .query({role: UserRoles.CONSUMER})
         .send(consumerData)
 
         expect(res.statusCode).toEqual(201)
