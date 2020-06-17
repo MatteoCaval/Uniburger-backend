@@ -1,6 +1,4 @@
 const dbHandler = require('./db-handler')
-const Category = require('../models/categoryModel');
-const Product = require('../models/productModel');
 const request = require('supertest')
 const app = require('./../../index.js');
 const userRoles = require('../common/userRoles');
@@ -30,7 +28,6 @@ const product1 = {
 }
 
 let adminToken = ""
-
 
 beforeAll(async () => {
     await dbHandler.connect()

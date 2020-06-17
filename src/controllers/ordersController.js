@@ -33,7 +33,7 @@ module.exports = function (io) {
             });
 
             if (!user.cart.length) {
-                res.status(400).send({ description: 'Order informations non valid' })
+                res.status(400).send({ description: 'Order informations not valid' })
             }
 
             const order = new Order({
@@ -73,6 +73,12 @@ module.exports = function (io) {
             const { state, riderId } = req.body
             const orderId = req.params.orderId;
 
+            const user = req.user
+            if (user.role === UserRoleTypes.CONSUMER) {
+                res.status(403).send({ description: 'Unauthorized' })
+                return
+            }
+
             // used to
             let riderIdToNotify = null
 
@@ -84,8 +90,13 @@ module.exports = function (io) {
                     return;
                 } else {
                     if (state === OrderState.IN_DELIVERY) {
+                        if (user.role === UserRoleTypes.RIDER) {
+                            res.status(403).send({ description: 'Unauthorized' })
+                            return
+                        }
+
                         if (!riderId) {
-                            res.status(400).send({ description: 'Rider id must be specified when updating order to in delivery' })
+                            res.status(400).send({ description: 'Rider id must be specified when updating order to in_delivery' })
                             return
                         }
                         const riderUser = await User.findById(riderId)
