@@ -87,7 +87,7 @@ afterAll(async () => {
     await dbHandler.closeDatabase()
 });
 
-describe('User Model Test', () => {
+describe('Rider Model Test', () => {
     it('Admin should create new rider', async () => {
         const res = await request(app)
             .post('/riders')
