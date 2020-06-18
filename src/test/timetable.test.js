@@ -5,8 +5,6 @@ const app = require('./../../index.js');
 const UserRoles = require('../common/userRoles');
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
-const timetableRoutes = require('../routes/timetableRoutes');
-
 
 const adminData = {
     email: "admin@test.it",

@@ -5,11 +5,10 @@ const User = require('../models/userModel')
 const request = require('supertest')
 const app = require('./../../index.js')
 const bcrypt = require('bcryptjs')
-
-
 const UserRoles = require('../common/userRoles')
 const Category = require('../models/categoryModel')
 const Product = require('../models/productModel')
+const Order = require('../models/orderModel')
 
 const orderData = {
     name: "Name",
@@ -192,6 +191,7 @@ describe('Order Model Test', () => {
         expect(res.body.pageCount).toBe(0)
     })
 
+    
     it('Should place order for current user', async () => {
         const res = await request(app)
             .post('/orders')
@@ -258,6 +258,11 @@ describe('Order Model Test', () => {
         expect(res.statusCode).toEqual(403)
     })
 
+    it('Should get rider orders', async () => {
+        const riderOrders = await Order.getRiderOrders(riderData._id)
+        expect(riderOrders).toHaveLength(1)
+    })
+
     it('Rider should update order state to delivered', async () => {
         const res = await request(app)
             .put('/orders/'+ `${orderData._id}`)
@@ -269,7 +274,18 @@ describe('Order Model Test', () => {
         expect(res.statusCode).toEqual(201)
     })
 
+    it('Should get orders by multiple states', async () => {
+        const orders = await Order.getOrdersByStates([OrderState.IN_DELIVERY, OrderState.DELIVERED])
+        expect(orders).toHaveLength(1)
+    })
 
+    it('Should get orders by single state', async () => {
+        const orders = await Order.getOrdersByStates([OrderState.DELIVERED])
+        expect(orders).toHaveLength(1)
+    })
 
-
+    it('Should get an empty array if no orders', async () => {
+        const orders = await Order.getOrdersByStates([OrderState.PENDING])
+        expect(orders).toHaveLength(0)
+    })
 })
