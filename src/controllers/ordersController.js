@@ -155,7 +155,7 @@ module.exports = function (io) {
             const perPage = 5
 
             const count = await (user.role === UserRoleTypes.ADMIN ? Order.count(stateFilter) : Order.count({ userId: user._id, ...stateFilter }))
-            const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find(stateFilter) : Order.find({ userId: user._id, ...stateFilter }))
+            const orders = await (user.role === UserRoleTypes.ADMIN ? Order.find(stateFilter).sort({date: 'desc'}) : Order.find({ userId: user._id, ...stateFilter }).sort({date: 'desc'}))
                 .skip(pageNumber > 0 ? ((pageNumber - 1) * perPage) : 0)
                 .limit(perPage)
 
