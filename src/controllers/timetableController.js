@@ -46,8 +46,8 @@ exports.update_timetable = async (req, res) => {
 }
 
 exports.get_today_timetable = async (req, res) => {
-    const todayIndex = new Date().getDay() - 1;
-    var weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const todayIndex = new Date().getDay();
+    var weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     var name = weekday[todayIndex];
 
