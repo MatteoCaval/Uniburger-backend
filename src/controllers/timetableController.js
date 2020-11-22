@@ -94,7 +94,7 @@ exports.get_today_timetable = async (req, res) => {
 }
 
 const generateSlots = (start, end)  => {
-    const hourStart = start.hour;
+    let hourStart = start.hour;
     const minutesStart = start.minute;
     const hourEnd = end.hour;
     const minutesEnd = end.minute;    
