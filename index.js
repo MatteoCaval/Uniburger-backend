@@ -41,8 +41,12 @@ app.use((req, res) => {
 
 module.exports = app
 
-http.listen(config.LISTEN_PORT, () => {
-    console.log(`listening on port ${config.LISTEN_PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    // open http connection only if not test running
+    // jest sets process.env.NODE_ENV to 'test'
+    http.listen(config.LISTEN_PORT, () => {
+        console.log(`listening on port ${config.LISTEN_PORT}`);
+    });
+}
 
 
