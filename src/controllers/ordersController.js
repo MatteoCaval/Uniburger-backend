@@ -160,7 +160,7 @@ module.exports = function (io) {
                 .limit(perPage)
 
             res.status(200).send({
-                page: pageNumber,
+                currentPage: pageNumber,
                 pageCount: Math.ceil(count / perPage),
                 orders: orders
             })
