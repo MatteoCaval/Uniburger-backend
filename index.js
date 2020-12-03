@@ -7,6 +7,13 @@ const cors = require('cors')
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+// aspetto 10 sec che il container di mongo sia su
+function pausecomp(millis)
+{ var date = new Date(); var curDate = null;
+ do { curDate = new Date(); } while(curDate-date < millis);
+}
+pausecomp(10000);
+
 mongoose.connect(
     config.MONGO_URI, // test nome del database, non della collection
     {
