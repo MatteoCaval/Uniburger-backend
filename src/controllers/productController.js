@@ -9,11 +9,11 @@ exports.get_product = async (req, res) => {
         if (product) {
             res.status(201).send(mapToResponseProduct(product));
         } else {
-            res.status(404).send({ message: "Product not found" });
+            res.status(404).send({ description: "Product not found" });
         }
     } catch (error) {
-        res.status(404).send({ description: error.message });
         console.log(error.message);
+        res.status(404).send({ description: "Error retrieving product" });
     }
 };
 
