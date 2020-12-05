@@ -169,7 +169,7 @@ afterAll(async () => {
 });
 
 
-describe('Order Model Test', () => {
+describe('Order services', () => {
 
     it('Should get orders', async () => {
         const res = await request(app)

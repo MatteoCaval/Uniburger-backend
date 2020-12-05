@@ -61,7 +61,7 @@ afterAll(async () => {
     await dbHandler.closeDatabase()
 });
 
-describe('Category & Product Model Test', () => {
+describe('Category & Product services', () => {
 
     it('Should get categories', async () => {
         const res = await request(app)

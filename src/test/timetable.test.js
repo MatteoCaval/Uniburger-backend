@@ -112,7 +112,7 @@ afterAll(async () => {
     await dbHandler.closeDatabase()
 });
 
-describe('Timetable Model Test', () => {
+describe('Timetable services', () => {
     it('Admin should update timetable', async () => {
         const res = await request(app)
             .put('/timetable')
