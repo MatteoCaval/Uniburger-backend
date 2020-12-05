@@ -14,13 +14,16 @@ function pausecomp(millis)
 }
 pausecomp(10000);
 
-mongoose.connect(
-    config.MONGO_URI, // test nome del database, non della collection
-    {
-        useNewUrlParser: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true
-    })
+
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(
+        config.MONGO_URI, // test nome del database, non della collection
+        {
+            useNewUrlParser: true,
+            useFindAndModify: false,
+            useUnifiedTopology: true
+        })
+}
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
