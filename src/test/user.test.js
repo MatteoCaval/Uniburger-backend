@@ -52,9 +52,10 @@ afterEach(async () => {
     //await dbHandler.clearDatabase()
 });
 
-afterAll(async () => {
+afterAll(async done => {
     await dbHandler.clearDatabase()
     await dbHandler.closeDatabase()
+    done();
 });
 
 describe('User services', () => {
