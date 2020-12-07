@@ -71,7 +71,7 @@ describe('Category & Product services', () => {
         expect(res.status).toEqual(201)
     })
 
-    it('Admin should create new category', async () => {
+    it('Allow Admin to create new category', async () => {
         const res = await request(app)
             .post('/catalog/categories')
             .set('Authorization', 'Bearer ' + adminToken)
