@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon",
-    "test": "jest --watch --runInBand --detectOpenHandles",
+    "test": "jest",
     "test:watch": "npm test -- --watch"
   },
   "author": "",
