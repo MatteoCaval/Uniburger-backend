@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon",
-    "test": "jest",
+    "test": "jest --watch --runInBand --detectOpenHandles",
     "test:watch": "npm test -- --watch"
   },
   "author": "",
@@ -29,8 +29,5 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
-  },
-  "resolutions": {
-    "webpack-notifier/node-notifier": "5.3.0"
   }
 }
