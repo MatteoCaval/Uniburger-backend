@@ -14,7 +14,7 @@ function pausecomp(millis)
 }
 pausecomp(10000);
 
-
+console.log(`Connected to this db: ${config.MONGO_URI}`);
 if (process.env.NODE_ENV !== 'test') {
     mongoose.connect(
         config.MONGO_URI, // test nome del database, non della collection
