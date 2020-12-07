@@ -29,5 +29,8 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
+  },
+  "resolutions": {
+    "webpack-notifier/node-notifier": "5.3.0"
   }
 }
