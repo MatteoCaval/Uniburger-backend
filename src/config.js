@@ -1,6 +1,6 @@
 module.exports = {
     // MongoDB
-    MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost/test',
+    MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost/uniburger',
 
     // JWT
     TOKEN_SECRET: process.env.TOKEN_SECRET || 'chiave',

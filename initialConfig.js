@@ -18,7 +18,7 @@ const createAdmin = async () => {
         const password = 'admin'
         const hashedPassword = await bcrypt.hash(password, 8)
         const user = new User({
-            email: 'admin@fooddelivery.it',
+            email: 'admin@uniburger.it',
             password: hashedPassword,
             name: 'admin',
             surname: 'admin',
