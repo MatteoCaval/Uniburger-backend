@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    branches: docker_action_test
+    branches: master
 
 jobs:
   main:
