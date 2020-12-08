@@ -33,7 +33,7 @@ module.exports = function (io) {
             });
 
             if (!user.cart.length) {
-                res.status(400).send({ description: 'Order informations not valid' })
+                return res.status(400).send({ description: 'Order informations not valid' })
             }
 
             const order = new Order({
@@ -64,7 +64,7 @@ module.exports = function (io) {
             liveOrdersManager.pushNewOrder(order)
 
         } catch (error) {
-            res.status(400).send({ description: error.message })
+            return res.status(400).send({ description: error.message })
         }
     }
 
