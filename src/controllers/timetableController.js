@@ -57,7 +57,8 @@ exports.get_today_timetable = async (req, res) => {
         let launchSlots = []
         let dinnerSlots = []
 
-        let now = new Date();
+        let now = convertTZ(new Date(), "Europe/Rome");
+
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
 
@@ -91,6 +92,10 @@ exports.get_today_timetable = async (req, res) => {
     } else {
         res.status(404).send({ message: "Cannot find today timetable" });
     }
+}
+
+function convertTZ(date, tzString) {
+    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
 }
 
 const generateSlots = (start, end)  => {
